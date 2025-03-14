@@ -8,7 +8,8 @@ const config = {
   kit: {
     adapter: adapter({
       pages: 'public',
-      assets: 'public'
+      assets: 'public',
+      fallback: 'index.html'
     })
   },
   vite: {
