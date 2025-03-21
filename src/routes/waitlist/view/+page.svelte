@@ -2,7 +2,7 @@
     import { db } from '../../firebase';
     import { collection, onSnapshot } from 'firebase/firestore';
     import { onMount } from 'svelte';
-    import { media } from '$lib/media';
+    import { media } from '../../../stores/media';
   	import MainLogo from "$lib/components/MainLogo.svelte";
 
     interface EmailDoc {

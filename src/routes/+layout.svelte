@@ -2,137 +2,278 @@
 	import '../app.postcss';
 	import LastUpdated from '$lib/components/LastUpdated.svelte';
 	import MainNav from "$lib/components/MainNav.svelte"
-	import { media } from '$lib/media';
+	import { media } from '../stores/media';
 	import MainLogo from '$lib/components/MainLogo.svelte';
 	import UtilityNav from '$lib/components/UtilityNav.svelte';
+	import BaseForm from '$lib/components/BaseForm.svelte';
+	import { slide } from 'svelte/transition';
+	import { isUserNew, orderMode, isSearchEnabled } from '../stores/app';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
+	import ScrollToTop from '$lib/components/ScrollToTop.svelte';
+	import { setOrderMode } from '$lib/utils/page';
+	import { setOverlay } from '$lib/utils/page';
+	import { createAgentAccountWizard, createSaleOrderWizard, overlay } from '../stores/dom';
+	import { overlayContentTypes } from '$lib/consts/dom';
+	import { orders } from '$lib/consts/app';
+	import BaseWizard from '$lib/components/BaseWizard.svelte';
+
+	let showSigninForm: boolean = false;
+	let path: string = $page.url.pathname;
+	
+	if (path.length > 1) {
+		isUserNew.set(false);
+	}
+
+	$: {
+		if ($orderMode && $orderMode.type === "purchase" && !$orderMode.isProductSelected) {
+			isSearchEnabled.set(true);
+		} else {
+			isSearchEnabled.set(false);
+		}
+	}
+
+	if ($orderMode.enabled) {
+		if ($orderMode.type === orders.SALE) {
+			setOverlay(true, overlayContentTypes.WIZARD, $createSaleOrderWizard)
+		}
+		else if ($orderMode.type === orders.PURCHASE) {
+			setOverlay(true, overlayContentTypes.SEARCH, null)
+		}
+	}
+
+	if ($overlay.enabled) {
+		console.log('overlay enabled')
+	}
 </script>
 
-{#if $media.isDesktop}
+<ScrollToTop />
+{#if $overlay.enabled}
+<div
+on:click={() => {}}
+class="h-full w-full fixed top-0 bottom-0 bg-black bg-opacity-80 z-40 flex items-center justify-center">
+	{#if $overlay.contentType === overlayContentTypes.WIZARD}
+	<BaseWizard
+	config={$overlay.content}
+	/>
+	{/if}
+</div>
+{/if}
 
-<header class="flex w-full items-center justify-evenly bg-orange-600 text-white">
-	<div class="w-1/3 flex items-center justify-center">
-		<MainLogo
-		classes="rounded-none text-4xl px-8"
-		type="default" />
+{#if $media.isDesktop && !$isUserNew}
+
+<header
+in:slide
+out:slide
+class="flex flex-col w-full fixed top-0 z-50">
+	<div
+	class="flex w-full items-center justify-evenly bg-orange-600 text-white {$orderMode ? "" : "shadow-xl"}">
+		<div class="w-1/3 flex items-center justify-center">
+			<button
+			type="button"
+			on:click={() => goto("/")}>
+				<MainLogo
+				classes="rounded-md text-4xl px-8 shadow-inset"
+				type="default" />
+			</button>
+		</div>
+		<div class="w-1/3">
+			<MainNav
+			classes=""
+			options={[
+				{
+					name: "buy",
+					label: "buy",
+					href: "/buy",
+				},
+				{
+					name: "sell",
+					label: "sell",
+					href: "/sell",
+				},
+				{
+					name: "agents",
+					label: "earn",
+					href: "/agents",
+				},
+				{
+					name: "categories",
+					label: "categories",
+					href: "",
+					children: [
+						{
+							name: "gadgets",
+							label: "phones and Gadgets",
+							href: "/browse#gadgets",
+						},
+						{
+							name: "appliances",
+							label: "appliances",
+							href: "/browse#appliances",
+						},
+						{
+							name: "clothing",
+							label: "clothing, shoes and accessories",
+							href: "/browse#clothing",
+						},
+						{
+							name: "cars",
+							label: "cars",
+							href: "/browse#cars",
+						},
+						{
+							name: "jewelry",
+							label: "jewelry",
+							href: "/browse#jewelry",
+						},
+						{
+							name: "pharmaceuticals",
+							label: "pharmaceuticals",
+							href: "/browse#pharmaceuticals",
+						},
+						{
+							name: "realestate",
+							label: "housing and real estate",
+							href: "/browse#realestate",
+						},
+						{
+							name: "gifting",
+							label: "gift items",
+							href: "/browse#gifting",
+						},
+						{
+							name: "food",
+							label: "food stuff",
+							href: "/browse#food",
+						},
+						{
+							name: "kiddies",
+							label: "kiddies",
+							href: "/browse#kiddies",
+						},
+						{
+							name: "stationery",
+							label: "books and stationery",
+							href: "/browse#stationery",
+						},
+						{
+							name: "homefinishing",
+							label: "furniture and home finishing",
+							href: "/browse#homefinishing",
+						},
+						{
+							name: "pets",
+							label: "pets",
+							href: "/browse#pets",
+						},
+						{
+							name: "householditems",
+							label: "household items",
+							href: "/browse#householditems",
+						},
+						{
+							name: "hardware",
+							label: "hardware",
+							href: "/browse#hardware",
+						},
+						{
+							name: "construction",
+							label: "construction",
+							href: "/browse#construction",
+						},
+					],
+				}
+			]}/>
+		</div>
+		<div class="w-1/3 flex flex-col items-center justify-center relative text-sm">
+			<div>
+				
+			</div>
+			<div
+			class="flex items-center justify-center">
+				<button
+				type="button"
+				class="text-white capitalize"
+				on:click={() => showSigninForm = !showSigninForm}>
+				log in
+				</button>
+				<UtilityNav
+				classes=""
+				options={[
+					{
+						name: "",
+						label: "",
+						href: "",
+					},
+					{
+						name: "",
+						label: "",
+						href: "",
+					},
+					{
+						name: "",
+						label: "",
+						href: "",
+					}
+				]}/>
+			</div>
+			{#if showSigninForm}
+			<div
+			in:slide
+			out:slide
+			on:mouseleave={() => showSigninForm = false}
+			class="absolute top-full z-10 bg-orange-600 rounded-b-lg shadow-lg p-6">
+				<BaseForm
+				classes="flex flex-col space-y-4 w-52"
+				config={{
+					name: "Log in",
+					fields: [
+						{
+							name: "email",
+							label: "email",
+							type: "email",
+							value: ""
+						},
+						{
+							name: "password",
+							label: "password",
+							type: "password",
+							value: ""
+						},
+					],
+					buttons: [
+						{
+							name: "submit",
+							label: "log in",
+							classes: "variant-filled bg-white text-orange-600 text-sm capitalize hover:bg-black hover:text-white",
+							type: "submit",
+							onClick: () => {},
+						},
+						{
+							name: "signup",
+							label: "I don't have an account yet",
+							classes: "text-sm text-white hover:text-black font-light",
+							type: "button",
+							onClick: () => setOverlay(true, overlayContentTypes.WIZARD, $createAgentAccountWizard),
+						}
+					],
+					onSubmit: () => {}
+				}} />
+			</div>
+			{/if}
+		</div>
 	</div>
-	<div class="w-1/3">
-		<MainNav
-		classes=""
-		options={[
-			{
-				name: "buy",
-				label: "buy",
-				href: "/buy",
-			},
-			{
-				name: "sell",
-				label: "sell",
-				href: "/sell",
-			},
-			{
-				name: "agents",
-				label: "earn",
-				href: "/agents",
-			},
-			{
-				name: "categories",
-				label: "categories",
-				href: "#categories",
-				children: [
-					{
-						name: "gadgets",
-						label: "phones and Gadgets",
-						href: "/browse#gadgets",
-					},
-					{
-						name: "appliances",
-						label: "appliances",
-						href: "/browse#appliances",
-					},
-					{
-						name: "clothing",
-						label: "clothing, shoes and accessories",
-						href: "/browse#clothing",
-					},
-					{
-						name: "cars",
-						label: "cars",
-						href: "/browse#cars",
-					},
-					{
-						name: "jewelry",
-						label: "jewelry",
-						href: "/browse#jewelry",
-					},
-					{
-						name: "pharmaceuticals",
-						label: "pharmaceuticals",
-						href: "/browse#pharmaceuticals",
-					},
-					{
-						name: "realestate",
-						label: "housing and real estate",
-						href: "/browse#realestate",
-					},
-					{
-						name: "gifting",
-						label: "gift items",
-						href: "/browse#gifting",
-					},
-					{
-						name: "food",
-						label: "food stuff",
-						href: "/browse#food",
-					},
-					{
-						name: "kiddies",
-						label: "kiddies",
-						href: "/browse#kiddies",
-					},
-					{
-						name: "stationery",
-						label: "books and stationery",
-						href: "/browse#stationery",
-					},
-					{
-						name: "homefinishing",
-						label: "furniture and home finishing",
-						href: "/browse#homefinishing",
-					},
-					{
-						name: "pets",
-						label: "pets",
-						href: "/browse#pets",
-					},
-					{
-						name: "householditems",
-						label: "household items",
-						href: "/browse#householditems",
-					},
-				],
-			}
-		]}/>
+	{#if $isSearchEnabled}
+	<div
+	in:slide
+	out:slide
+	class="h-20 bg-orange-600 w-full z-50 flex items-end justify-center p-4">
+		<input
+		type="text"
+		placeholder="tell us what you want"
+		class="input capitalize rounded-lg w-1/2" />
 	</div>
-	
-	<UtilityNav
-	classes="w-1/3"
-	options={[
-		{
-			name: "",
-			label: "",
-			href: "",
-		},
-		{
-			name: "",
-			label: "",
-			href: "",
-		},
-		{
-			name: "",
-			label: "",
-			href: "",
-		}
-	]}/>
+	{/if}
 </header>
 
 {:else if $media.isMobile}
@@ -149,8 +290,13 @@
 
 {#if $media.isDesktop}
 
-<footer class="bottom-0 flex flex-col items-center justify-center p-4">
+<footer class="w-full bottom-0 flex flex-col items-center justify-center z-40">
 	<LastUpdated />
+	<div class="bg-gray-800 text-white py-4 w-full">
+		<div class="container mx-auto px-4 text-center">
+		  <p>&copy; 2023 o42. All rights reserved.</p>
+		</div>
+	</div>
 </footer>
 
 {:else}

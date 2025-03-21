@@ -2,7 +2,7 @@
     import { db } from '../../firebase';
     import { doc, setDoc } from 'firebase/firestore';
     import StylizedName from '$lib/components/StylizedName.svelte';
-    import { media } from '$lib/media'
+    import { media } from '../../../stores/media'
 	import MainLogo from '$lib/components/MainLogo.svelte';
   
     let email: string = '';

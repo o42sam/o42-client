@@ -136,3 +136,263 @@ nav .cursor-default {
   font-weight: 900;
   font-style: italic;
 }
+
+    .foreground-layer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 1;
+    }
+  
+    .foreground-shape {
+      position: absolute;
+      fill: rgba(255, 152, 0, 0.3);
+    }
+  
+    .shape1 { top: 20%; left: 10%; }
+    .shape2 { top: 50%; right: 15%; }
+    .shape3 { top: 80%; left: 25%; }
+  
+    .section {
+      position: relative;
+      padding: 60px 20px;
+      min-height: 50vh;
+      z-index: 0;
+    }
+
+    .content {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    h1, h2, h3 {
+      color: #000;
+      @apply font-bold;
+    }
+  
+    h1 { font-size: 2.5em; margin-bottom: 0.5em; }
+    h2 { font-size: 2em; margin-bottom: 1em; }
+    h3 { font-size: 1.5em; margin-bottom: 0.5em; }
+  
+    p { font-size: 1.1em; line-height: 1.5; }
+  
+    .steps, .benefits {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+  
+    .step, .benefit {
+      flex: 1;
+      min-width: 200px;
+      text-align: left;
+    }
+  
+    .step svg, .benefit svg {
+      margin-bottom: 10px;
+      transition: transform 0.2s ease;
+    }
+  
+    .step:hover svg, .benefit:hover svg {
+      transform: scale(1.1);
+    }
+  
+    .button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1.1em;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+  
+    .button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+  
+    .animate {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+  
+    .animate.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  
+    @media (max-width: 768px) {
+      .steps, .benefits {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+
+        /* Base emoji styling */
+    .emoji {
+    display: inline-block;
+    font-size: 2em;
+    margin-bottom: 10px;
+    }
+
+    /* Ensure transforms work on emojis */
+    .step .emoji,
+    .benefit .emoji {
+    transition: transform 0.2s ease;
+    }
+
+    /* Hover effect (optional, retained from original) */
+    .step:hover .emoji,
+    .benefit:hover .emoji {
+    transform: scale(1.1);
+    }
+
+    /* Animation when in view */
+    .step.visible .emoji,
+    .benefit.visible .emoji {
+    animation: bounce 0.5s ease-in-out;
+    }
+
+    /* Bounce animation definition */
+    @keyframes bounce {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    }
+
+    /* Existing styles (assumed unchanged) */
+    .animate {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .animate.visible {
+    opacity: 1;
+    transform: translateY(0);
+    }
+
+    /* Background with gradient */
+.background-layer {
+  background: linear-gradient(200deg, #fff 0%, #fff 0%, #e64a19 150%);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+/* Emoji animations */
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* Apply animations when visible */
+.step.visible .emoji.bounce,
+.benefit.visible .emoji.bounce {
+  animation: bounce 2s ease-in-out infinite;
+}
+
+.step.visible .emoji.spin,
+.benefit.visible .emoji.spin {
+  animation: spin 3s linear infinite;
+}
+
+.step.visible .emoji.pulse,
+.benefit.visible .emoji.pulse {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Background animation container */
+.background-animation {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: -1;
+}
+
+/* Animated background elements */
+.background-animation::before,
+.background-animation::after {
+  content: '';
+  position: absolute;
+  background: rgba(255, 255, 255, 0.2);
+  animation: move 10s linear infinite;
+}
+
+.background-animation::before {
+  width: 100%;
+  height: 2px;
+  top: 20%;
+}
+
+.background-animation::after {
+  width: 2px;
+  height: 100%;
+  left: 30%;
+}
+
+@keyframes move {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Basic section styling (for context) */
+.section { padding: 50px 0; }
+.content { max-width: 1200px; margin: 0 auto; }
+.steps, .benefits { display: flex; justify-content: space-around; }
+.step, .benefit { text-align: center; }
+.emoji { font-size: 2em; display: block; }
+
+.slide-in-bg {
+  animation: slideIn 1s ease-out forwards;
+  transform-origin: top;
+}
+
+@keyframes slideIn {
+  0% {
+    transform: scaleY(0);
+  }
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+   @keyframes pulseUpDown {
+        0% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-10px); /* Moves up */
+        }
+        100% {
+            transform: translateY(0); /* Returns to original position */
+        }
+    }
+
+    .animate-pulse-up-down {
+        animation: pulseUpDown 2s ease-in-out infinite;
+    }
