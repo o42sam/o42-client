@@ -1,10 +1,11 @@
-export interface BaseWizard {
+export interface BaseModal {
     name: string;
     description?: string;
-    steps: Array<WizardStep>;
+    steps?: Array<ModalStep>;
+    content?: any;
 }
 
-export interface WizardStep {
+export interface ModalStep {
     title: string;
     description?: string;
     contentType: string;

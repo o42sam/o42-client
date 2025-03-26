@@ -2,7 +2,7 @@
     // Import the BaseProduct type from your types file
     import ReviewManager from '$lib/components/ReviewManager.svelte';
 	import type { BaseOrder, SaleOrder } from '$lib/types/app/order';
-	import { setOrderMode } from '$lib/utils/page';
+	import { setOrderMode } from '../../../services/dom';
     
     // Define the product prop that will be passed to the page
     export let data: any;

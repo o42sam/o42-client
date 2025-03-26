@@ -1,23 +1,23 @@
 import axios from 'axios';
 import type { Customer } from "$lib/types/app/user";
-import { API_URL } from '.';
+import { URL } from '../api/index';
 
 
 export const getById = async (id: string): Promise<Customer> => {
-  const response = await axios.get(`${API_URL}/customers/${id}`);
+  const response = await axios.get(`${URL}/customers/${id}`);
   return response.data;
 };
 
 export const create = async (customerData: Omit<Customer, 'id'>): Promise<Customer> => {
-  const response = await axios.post(`${API_URL}/customers`, customerData);
+  const response = await axios.post(`${URL}/customers`, customerData);
   return response.data;
 };
 
 export const updateById = async (id: string, customerData: Partial<Customer>): Promise<Customer> => {
-  const response = await axios.put(`${API_URL}/customers/${id}`, customerData);
+  const response = await axios.put(`${URL}/customers/${id}`, customerData);
   return response.data;
 };
 
 export const deleteById = async (id: string): Promise<void> => {
-  await axios.delete(`${API_URL}/customers/${id}`);
+  await axios.delete(`${URL}/customers/${id}`);
 };

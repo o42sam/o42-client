@@ -1,4 +1,8 @@
-export const API_URL = 'http://localhost:3000';
+import { API_URL } from "$lib/consts";
+
+export const URL = API_URL;
+
+export * from "./auth"
 
 export { getById as getProductById, getByProperty as getProductsByProperty } from "./product";
 

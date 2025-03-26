@@ -2,21 +2,25 @@
 	import '../app.postcss';
 	import LastUpdated from '$lib/components/LastUpdated.svelte';
 	import MainNav from "$lib/components/MainNav.svelte"
-	import { media } from '../stores/media';
+	import { display } from '../stores/media';
 	import MainLogo from '$lib/components/MainLogo.svelte';
 	import UtilityNav from '$lib/components/UtilityNav.svelte';
 	import BaseForm from '$lib/components/BaseForm.svelte';
-	import { slide } from 'svelte/transition';
-	import { isUserNew, orderMode, isSearchEnabled } from '../stores/app';
+	import { scale, slide } from 'svelte/transition';
+	import { isUserNew } from '../stores/user';
+	import { orderMode } from '../stores/order';
+	import { isSearchEnabled } from '../stores/dom';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import ScrollToTop from '$lib/components/ScrollToTop.svelte';
-	import { setOrderMode } from '$lib/utils/page';
-	import { setOverlay } from '$lib/utils/page';
-	import { createAgentAccountWizard, createSaleOrderWizard, overlay } from '../stores/dom';
-	import { overlayContentTypes } from '$lib/consts/dom';
+	import { setOrderMode } from '../services/order/index';
+	import { setModal, setSearch } from '../services/dom';
+	import { createAgentAccountModal, createSaleOrderWizard, modal } from '../stores/dom';
+	import { modalActions, modals } from '$lib/consts/dom';
 	import { orders } from '$lib/consts/app';
-	import BaseWizard from '$lib/components/BaseWizard.svelte';
+	import BaseModal from '$lib/components/BaseModal.svelte';
+	import ProgressBar from '$lib/components/ProgressBar.svelte';
+	import { Icon, MagnifyingGlass, XCircle, XMark } from 'svelte-hero-icons';
 
 	let showSigninForm: boolean = false;
 	let path: string = $page.url.pathname;
@@ -35,51 +39,55 @@
 
 	if ($orderMode.enabled) {
 		if ($orderMode.type === orders.SALE) {
-			setOverlay(true, overlayContentTypes.WIZARD, $createSaleOrderWizard)
+			setModal(true, modals.DYNAMIC, $createSaleOrderWizard)
 		}
 		else if ($orderMode.type === orders.PURCHASE) {
-			setOverlay(true, overlayContentTypes.SEARCH, null)
+			setModal(true, modals.SEARCH, null)
 		}
-	}
-
-	if ($overlay.enabled) {
-		console.log('overlay enabled')
 	}
 </script>
 
 <ScrollToTop />
-{#if $overlay.enabled}
+{#if $modal.enabled}
 <div
+in:slide
+out:slide
 on:click={() => {}}
-class="h-full w-full fixed top-0 bottom-0 bg-black bg-opacity-80 z-40 flex items-center justify-center">
-	{#if $overlay.contentType === overlayContentTypes.WIZARD}
-	<BaseWizard
-	config={$overlay.content}
+class="h-full w-full fixed top-0 bottom-0 bg-black bg-opacity-80 z-20 flex items-center justify-center">
+	{#if $modal.contentType === modals.DYNAMIC}
+	<BaseModal
+	config={$modal.content}
+	/>
+	{/if}
+	{#if $modal.contentType === modals.STATIC}
+	<BaseModal
+	config={$modal.content}
 	/>
 	{/if}
 </div>
 {/if}
 
-{#if $media.isDesktop && !$isUserNew}
-
+{#if $display.isDesktop && !$isUserNew}
+<ProgressBar />
 <header
 in:slide
 out:slide
 class="flex flex-col w-full fixed top-0 z-50">
 	<div
-	class="flex w-full items-center justify-evenly bg-orange-600 text-white {$orderMode ? "" : "shadow-xl"}">
-		<div class="w-1/3 flex items-center justify-center">
+	class="flex w-full items-center justify-evenly bg-orange-600 text-white {$modal.enabled ? "" : "shadow-xl"}"
+	style="height: 40px;">
+		<div class="w-1/3 flex items-center justify-center h-full">
 			<button
 			type="button"
 			on:click={() => goto("/")}>
 				<MainLogo
-				classes="rounded-md text-4xl px-8 shadow-inset"
+				classes="rounded-md text-2xl px-8 py-2 h-9 shadow-inner shadow-lg"
 				type="default" />
 			</button>
 		</div>
-		<div class="w-1/3">
+		<div class="w-1/3 h-full flex gap-4 items-center justify-center">
 			<MainNav
-			classes=""
+			navListClasses=""
 			options={[
 				{
 					name: "buy",
@@ -184,8 +192,15 @@ class="flex flex-col w-full fixed top-0 z-50">
 					],
 				}
 			]}/>
+			<button
+			in:slide
+			type="button"
+			class="rounded-md p-2 {$isSearchEnabled && $modal.enabled ? "bg-white" : "bg-orange-600"}"
+			on:click={() => setSearch(!$isSearchEnabled)}>
+				<Icon src={MagnifyingGlass} class="w-5 h-5 {$isSearchEnabled && $modal.enabled ? "text-orange-600" : "text-white"}" solid />
+			</button>
 		</div>
-		<div class="w-1/3 flex flex-col items-center justify-center relative text-sm">
+		<div class="w-1/3 h-full flex flex-col items-center justify-center relative text-sm">
 			<div>
 				
 			</div>
@@ -221,8 +236,9 @@ class="flex flex-col w-full fixed top-0 z-50">
 			<div
 			in:slide
 			out:slide
+			on:blur={() => showSigninForm = false}
 			on:mouseleave={() => showSigninForm = false}
-			class="absolute top-full z-10 bg-orange-600 rounded-b-lg shadow-lg p-6">
+			class="absolute top-full z-50 bg-orange-600 rounded-b-lg shadow-lg p-6">
 				<BaseForm
 				classes="flex flex-col space-y-4 w-52"
 				config={{
@@ -232,12 +248,14 @@ class="flex flex-col w-full fixed top-0 z-50">
 							name: "email",
 							label: "email",
 							type: "email",
+							description: "",
 							value: ""
 						},
 						{
 							name: "password",
 							label: "password",
 							type: "password",
+							description: "",
 							value: ""
 						},
 					],
@@ -254,7 +272,7 @@ class="flex flex-col w-full fixed top-0 z-50">
 							label: "I don't have an account yet",
 							classes: "text-sm text-white hover:text-black font-light",
 							type: "button",
-							onClick: () => setOverlay(true, overlayContentTypes.WIZARD, $createAgentAccountWizard),
+							onClick: () => setModal(true, modals.DYNAMIC, $createAgentAccountModal),
 						}
 					],
 					onSubmit: () => {}
@@ -263,20 +281,28 @@ class="flex flex-col w-full fixed top-0 z-50">
 			{/if}
 		</div>
 	</div>
-	{#if $isSearchEnabled}
+	{#if $modal.enabled && $isSearchEnabled }
 	<div
 	in:slide
 	out:slide
-	class="h-20 bg-orange-600 w-full z-50 flex items-end justify-center p-4">
+	class="h-20 bg-orange-600 w-full z-40 flex items-end justify-center p-4">
 		<input
 		type="text"
 		placeholder="tell us what you want"
 		class="input capitalize rounded-lg w-1/2" />
 	</div>
 	{/if}
+	{#if $modal.enabled}
+	<button
+	in:slide
+	type="button"
+	class="absolute capitalize py-2 px-4 mt-9 text-xs z-50 hover:bg-orange-600 self-start rounded-b-lg"
+	on:click={() => { setModal(false, "", null); if ($isSearchEnabled) setSearch(false); }}>
+	<Icon src={XMark} class="w-6 h-6 text-white" solid />
+	</button>
+	{/if}
 </header>
-
-{:else if $media.isMobile}
+{:else if $display.isMobile}
 
 <header>
 	<div class="flex w-full">
@@ -288,7 +314,7 @@ class="flex flex-col w-full fixed top-0 z-50">
 
 <slot />
 
-{#if $media.isDesktop}
+{#if $display.isDesktop}
 
 <footer class="w-full bottom-0 flex flex-col items-center justify-center z-40">
 	<LastUpdated />
@@ -304,5 +330,6 @@ class="flex flex-col w-full fixed top-0 z-50">
 <footer class="bottom-0 flex flex-col items-center justify-center p-4">
 	<LastUpdated />
 </footer>
+<ScrollToTop />
 
 {/if}

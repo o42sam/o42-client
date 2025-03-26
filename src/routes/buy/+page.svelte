@@ -1,6 +1,8 @@
 <script lang="ts">
     import StylizedName from "$lib/components/StylizedName.svelte";
-    import { setOrderMode } from "$lib/utils/page";
+    import { setOrderMode } from "../../services/order";
+    import { setModal } from "../../services/dom";
+    import { modals } from "$lib/consts/dom";
 </script>
   
   <main class="bg-white mt-32">
@@ -13,7 +15,7 @@
             Create detailed purchase orders and let our network of verified agents find and deliver exactly what you need, seamlessly and securely.
           </p>
           <a
-            on:click={() => setOrderMode("purchase", true)}
+            on:click={() => { setOrderMode("purchase", true); setModal(true, modals.SEARCH, null) }}
             class="button text-white bg-orange-600 px-6 text-center hover:bg-black transition-colors"
           >
             Order Now

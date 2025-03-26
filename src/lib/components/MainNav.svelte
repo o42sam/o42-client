@@ -6,7 +6,7 @@
 
     export let options: Array<MainNavOption>;
     export let type: string = "default";
-    export let classes: string;
+    export let navListClasses: string;
     
     $: isCurrentOptionSelected = (currentOption: string) => {
         let path: string = `${$page.url.pathname}${$page.url.hash}`;
@@ -16,7 +16,7 @@
 
 {#if type ==="default"}
 <nav class="w-full h-full relative">
-    <ul class="flex text-white {classes} h-full w-full items-center justify-evenly m-0 p-0">
+    <ul class="flex relative text-white h-full w-full items-center justify-evenly m-0 p-0 {navListClasses}">
         {#each options as option, index (index)}
         <li
         class="text-black flex flex-col items-center justify-center py-4">
@@ -40,7 +40,8 @@
         on:mouseenter={() => option.displayChildren = true}
         on:mouseleave={() => option.displayChildren = false}
         on:mouseup={() => option.displayChildren = false}
-        class="top-full z-20 bg-orange-600 absolute w-screen grid grid-cols-4 p-4 text-sm">
+        on:blur={() => option.displayChildren = false}
+        class="absolute top-full z-20 bg-orange-600 grid grid-cols-4 p-4 text-sm w-screen ml-11">
             {#each option.children as child, index (index)}
             <li class="{isCurrentOptionSelected(child.href) || child.displayChildren ? "text-black" : "hover:font-bold text-white"} flex flex-col items-start justify-center">
                 {#if !child.children}

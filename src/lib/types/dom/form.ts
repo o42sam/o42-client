@@ -14,7 +14,8 @@ export type FormField = {
     type: string;
     description?: string;
     options?: Array<SelectFieldOption>
-    value: string;
+    value: any;
+    isConfirmation?: boolean;
     inputClasses?: string;
     labelClasses?: string;
     onInput?: () => void;
@@ -24,6 +25,8 @@ type SelectFieldOption = {
     name: string;
     value: string;
     classes?: string;
+    onSelectedChildForm?: BaseForm;
+    isSelected?: boolean;
 }
 
 type FormButton = {
@@ -33,3 +36,58 @@ type FormButton = {
     classes?: string;
     onClick: () => void;
 };
+
+export interface UserBasicInfoSubmission {
+    fName: string;
+    lName: string;
+    email: string;
+    password: string;
+    phonenumber?: string;
+    confirmPassword: string;
+};
+
+export interface UserIdentificationInfoSubmission {
+    profilePhoto: string;
+    idNumber: string;
+    preferredPersonalId: string;
+    idDocumentPhoto: string;
+};
+
+export interface UserFinancialInfoSubmission {
+    userId: string;
+    bvn: string;
+}
+
+export interface SaleOrderBasicInfoSubmission {
+    name: string;
+    creatorId?: string;
+    description: string;
+    saleType: string;
+    agentsAssignedIds: Array<string>;
+    commissionOnFulfill: number;
+}
+
+export interface SaleOrderProductInfoSubmission {
+    name: string;
+    category: string;
+    description: string;
+    images: Array<string>;
+    video?: string;
+    condition: string;
+
+}
+
+export interface PurchaseOrderBasicInfoSubmission {
+    name: string;
+    description: string;
+    productReferenceUrl: string;
+    productReferenceSource: string;
+    isProductAvailable: string;
+}
+
+export interface EditProfileForm {
+    fName: string;
+    lName: string;
+    location: string;
+    about: string;
+}

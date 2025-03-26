@@ -1,27 +1,33 @@
 import type { Review } from ".";
+import type { Amount } from "./wallet";
 
 export type BaseProductLite = {
     name: string;
     image: string;
     condition?: ProductCondition;
-    price: number;
+    price: Amount;
 }
 
 export interface BaseProduct {
     id: string;
     name: string;
     category: string;
-    images: Array<string>;
-    videos?: Array<string>;
     description: string;
+    fault?: Fault;
+    images: Array<File>;
+    video: string;
     condition?: ProductCondition;
     location?: string;
-    price: number;
+    price: Amount;
     reviews: Array<Review>;
-    orderId: string;
+    saleOrderId: string;
     createdAt: Date;
     lastUpdated: Date;
 };
+
+interface Fault {
+    description: string;
+}
 
 export type ProductGroup = {
     name: string,

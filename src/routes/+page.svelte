@@ -1,60 +1,55 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { goto } from '$app/navigation';
-	import { media } from '../stores/media';
-	import StylizedName from "$lib/components/StylizedName.svelte";
-	import Carousel from '$lib/components/Carousel.svelte';
-	import ProductCard from '$lib/components/BaseCard.svelte';
-	import type { BaseProductLite, ProductGroup } from '$lib/types/app/product';
-	import { isUserNew, orderMode } from '../stores/app';
-	import { setOrderMode } from '$lib/utils/page';
-	import { products } from '$lib/mock';
-	// onMount(() => {
-	//   goto('/join-waitlist', { replaceState: true });
-	// });
-
-    import { writable } from 'svelte/store';
-	import { slide } from 'svelte/transition';
-	import MainLogo from '$lib/components/MainLogo.svelte';
-	import ScrollToTop from '$lib/components/ScrollToTop.svelte';
-	import { getRandomInt } from '$lib/utils/helpers';
-    // Store for scroll position
-    const scrollY = writable<number>(0);
+  import { onMount } from 'svelte';
+  import { goto } from '$app/navigation';
+  import { display } from '../stores/media';
+  import StylizedName from "$lib/components/StylizedName.svelte";
+  import Carousel from '$lib/components/Carousel.svelte';
+  import ProductCard from '$lib/components/BaseCard.svelte';
+  import type { BaseProductLite, ProductGroup } from '$lib/types/app/product';
+  import { orderMode } from '../stores/order';
+  import { isUserNew } from '../stores/user';
+  import { setOrderMode } from '../services/order/index';
+  import { products } from '$lib/mock';
+  import { writable } from 'svelte/store';
+  import { slide } from 'svelte/transition';
+  import MainLogo from '$lib/components/MainLogo.svelte';
+  import ScrollToTop from '$lib/components/ScrollToTop.svelte';
+  import { getRandomInt } from '$lib/utils/helpers';
+  import { scrollY } from '../stores/media';
+	import { ArrowPath, Clipboard, ClipboardDocument, ClipboardDocumentCheck, HandRaised, HandThumbUp, Icon, RocketLaunch, ShieldCheck, Truck } from 'svelte-hero-icons';
   
-    // Update scroll position on client-side only
-    onMount(() => {
-      if (typeof window === 'undefined') return;
-      const handleScroll = () => {
-        scrollY.set(window.scrollY);
-      };
-      window.addEventListener('scroll', handleScroll);
-      return () => window.removeEventListener('scroll', handleScroll);
-    });
+  onMount(() => {
+    if (typeof window === 'undefined') return;
+    const handleScroll = () => {
+      scrollY.set(window.scrollY);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  });
   
-    // Custom action for scroll-triggered animations
-    function animateOnScroll(node: HTMLElement, { delay = 0 }: { delay?: number }) {
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            setTimeout(() => {
-              node.classList.add('visible');
-            }, delay);
-            observer.disconnect();
-          }
-        },
-        { threshold: 0.1 }
-      );
-      observer.observe(node);
-      return {
-        destroy() {
+  function animateOnScroll(node: HTMLElement, { delay = 0 }: { delay?: number }) {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            node.classList.add('visible');
+          }, delay);
           observer.disconnect();
         }
-      };
-    }
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(node);
+    return {
+      destroy() {
+        observer.disconnect();
+      }
+    };
+  }
 
-    let getStarted = () => {
-        isUserNew.set(false)
-    }
+  let getStarted = () => {
+      isUserNew.set(false)
+  }
 
 	let exploreOptions: Array<string> = ["condition", "time on sale", "category"]
 
@@ -76,7 +71,7 @@
 			description: ""
 		}
 	]
-  </script>
+</script>
 
 {#if $isUserNew}
 <div
@@ -102,7 +97,7 @@
 
 	<section class="w-full relative flex items-center justify-center">
 		<div class="relative z-10 animate-pulse-up-down">
-			<MainLogo type="alt"/>
+			<MainLogo type="alt" classes="text-7xl p-3"/>
 		</div>
 		<div class="absolute inset-0 bg-orange-600 slide-in-bg"></div>
 	</section>
@@ -127,18 +122,18 @@
   <div class="content">
     <h2>How It Works</h2>
     <div class="steps">
-      <div use:animateOnScroll={{ delay: 0 }} class="animate step space-y-6">
-        <span class="emoji bounce">📝</span>
+      <div use:animateOnScroll={{ delay: 0 }} class="animate step space-y-6 flex flex-col items-center justify-center">
+        <span class="emoji bounce"><Icon src="{ClipboardDocumentCheck}" size="64"/></span>
         <h3>Place an order</h3>
         <p>Tell us the items you want to buy or sell and we notify our agents.</p>
       </div>
-      <div use:animateOnScroll={{ delay: 200 }} class="animate step space-y-6">
-        <span class="emoji spin">🔄</span>
+      <div use:animateOnScroll={{ delay: 200 }} class="animate step space-y-6 flex flex-col items-center justify-center">
+        <span class="emoji spin"><Icon src="{ArrowPath}" solid size="64" /></span>
         <h3>Order Matching</h3>
-        <p>Our platform intelligently connects buyers and sellers with the help of our agents.</p>
+        <p>Our platform intelligently connects buyers and sellers with the help of our matching algorithm.</p>
       </div>
-      <div use:animateOnScroll={{ delay: 400 }} class="animate step space-y-6">
-        <span class="emoji pulse">🚚</span>
+      <div use:animateOnScroll={{ delay: 400 }} class="animate step space-y-6 flex flex-col items-center justify-center">
+        <span class="emoji pulse"><Icon src="{Truck}" solid size="64" /></span>
         <h3 class="capitalize">Delivery</h3>
         <p>We see to it that you promptly get what you want, ensuring delivery and quality of product and service.</p>
       </div>
@@ -151,18 +146,18 @@
   <div class="content">
     <h2>Why Choose <StylizedName /></h2>
     <div class="benefits">
-      <div use:animateOnScroll={{ delay: 0 }} class="animate benefit space-y-6">
-        <span class="emoji bounce">🚀</span>
+      <div use:animateOnScroll={{ delay: 0 }} class="animate benefit space-y-6 flex flex-col items-center justify-center">
+        <span class="emoji bounce"><Icon src="{RocketLaunch}" solid size="64" /></span>
         <h3>Ease of Transacting</h3>
         <p>User-friendly platform makes buying and selling a breeze.</p>
       </div>
-      <div use:animateOnScroll={{ delay: 200 }} class="animate benefit space-y-6">
-        <span class="emoji spin">🔒</span>
+      <div use:animateOnScroll={{ delay: 200 }} class="animate benefit space-y-6 flex flex-col items-center justify-center">
+        <span class=""><Icon src="{ShieldCheck}" solid size="64" /></span>
         <h3>Security</h3>
         <p>Our Customers are protected with top-notch security measures.</p>
       </div>
-      <div use:animateOnScroll={{ delay: 400 }} class="animate benefit space-y-6">
-        <span class="emoji pulse">🤝</span>
+      <div use:animateOnScroll={{ delay: 400 }} class="animate benefit space-y-6 flex flex-col items-center justify-center">
+        <span class="emoji pulse"><Icon src="{HandThumbUp}" solid size="64" /></span>
         <h3>Integrity</h3>
         <p>Our network ensures you get exactly what you want at the best price.</p>
       </div>
@@ -176,7 +171,9 @@
         <h2 class="text-white">Ready to make your first order?</h2>
         <p>Create an account now and start trading to experience seamless transactions.</p>
 		<div class="flex flex-col items-center justify-center space-y-4">
-			<button class="button rounded-md text-black bg-white font-bold">Sign Up Now</button>
+			<button
+      class="button rounded-md text-black bg-white font-bold"
+      on:click={() => {}}>Sign Up Now</button>
 			<button class="button text-white bg-none font-bold bg-black hover:bg-orange-600" on:click={getStarted}>Get Started</button>
 		</div>
     </div>
@@ -184,13 +181,7 @@
   </div>
   <ScrollToTop />
 {:else}
-<div class="flex flex-col w-full mx-0 justify-center items-center mt-10 {$media.isDesktop ? "" : "px-10"}">
-	<!-- {#if $media.isDesktop}
-	<StylizedName sizeClass="text-7xl" />
-	{:else}
-	<StylizedName />
-	{/if} -->
-	<!-- <p class={$media.isDesktop ? "text-sm" : "text-xs w-full"}>...building the ultimate secure peer-to-peer online retail trading platform.</p> -->
+<div class="flex flex-col w-full mx-0 justify-center items-center mt-10 {$display.isDesktop ? "" : "px-10"}">
 	<div
 	class="flex flex-col w-full items-center justify-center space-y-6">
 		<div style="background-image: url({coverUrl}); background-size: cover; background-position: top;"

@@ -1,23 +1,31 @@
 <script lang="ts">
     import type { Customer, Agent } from '$lib/types/app/user';
-    import Star from './Star.svelte';
     import Carousel from './Carousel.svelte';
-	import { setOrderMode } from '$lib/utils/page';
+	import { setOrderMode } from '../../services/order';
     import { products } from '$lib/mock';
-	import ProductCard from './BaseCard.svelte';
 	import CheckMark from './CheckMark.svelte';
 	import ConversationManager from './ConversationManager.svelte';
 	import ReviewManager from './ReviewManager.svelte';
-    
-    // Define the user prop as a union of Customer or Agent
+    import { Icon, MapPin, Phone, Envelope } from "svelte-hero-icons";
+	import { setModal } from '../../services/dom';
+	import { modals } from '$lib/consts/dom';
+	import { EditProfileModal, SettingsModal } from '../../stores/dom';
+
     export let user: Customer | Agent;
     export let classes: string = "";
     
-    // Type guard to check if the user is an Agent
     function isAgent(user: Customer | Agent): user is Agent {
         return 'dob' in user && 'phoneNumber' in user;
     }
-    </script>
+
+    const openSettings = () => {
+        setModal(true, modals.STATIC, $SettingsModal);
+    }
+
+    const openProfileEdit = () => {
+        setModal(true, modals.STATIC, $EditProfileModal);
+    }
+</script>
     
     <div class="mx-auto p-4 mt-20 {classes}">
         <div class="flex justify-between items-start">
@@ -44,36 +52,48 @@
                     
                     <!-- Contact Information -->
                     <div class="mt-4">
-                        <p><strong>Email:</strong> {user.email}</p>
-                        {#if isAgent(user) && user.phoneNumber}
-                            <p><strong>Phone:</strong> {user.phoneNumber}</p>
-                        {/if}
+                        <div class="flex flex-col items-start justify-start">
+                            <p class="flex justify-end gap-1">
+                                <Icon src="{Envelope}" micro size="16"/>
+                                <span>{user.email}</span>
+                            </p>
+                            {#if isAgent(user) && user.phoneNumber}
+                            <p class="flex gap-1">
+                                <Icon src="{Phone}" micro size="16"/> 
+                                <span>{user.phoneNumber}</span>
+                            </p>
+                            {/if}
+                        </div>
                         {#if user.location}
-                            <p><strong>Location:</strong> {user.location}</p>
+                            <p class="flex justify-start items-start gap-1">
+                                <Icon src="{MapPin}" micro size="16" />
+                                <span class="self end">
+                                    {user.location}
+                                </span>
+                            </p>
                         {/if}
                     </div>
                     <!-- Agent-Specific Details -->
                     {#if isAgent(user)}
                         <div class="mt-4">
-                            <p><strong>About:</strong> {user.about}</p>
-                            <p>
-                                <strong>Tier:</strong>
-                                {user.tier.name} - {user.tier.description}
-                            </p>
+                            <div>
+                                <strong>About</strong> 
+                                <p>{user.about}</p>
+                            </div>
                         </div>
                     {/if}
                     <div class="flex flex-col space-y-2 w-full items-center justify-evenly">
                         <button
                         type="button"
                         class="button bg-orange-600 text-white capitalize my-2 w-full"
-                        on:click={() => {}}>
+                        on:click={openProfileEdit}>
                             edit profile
                         </button>
                         <button
                         type="button"
                         class="button bg-black text-white capitalize my-2 w-full"
-                        on:click={() => {}}>
-                            account settings
+                        on:click={openSettings}>
+                            settings
                         </button>
                     </div>
                 </div>
@@ -110,6 +130,7 @@
             </div>
             <!-- Reviews Section -->
             <div class="w-1/3">
+                <p class="text-lg font-bold">Messages</p>
                 <div class=" p-4 mb-4 bg-white" style="height: 500px">
                     <ConversationManager classes="h-full" currentUserId={user.id} messages={user.messages ? user.messages : null} />
                 </div>

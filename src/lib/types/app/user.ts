@@ -1,11 +1,13 @@
 import type { Review } from ".";
 import type { BaseOrder, PurchaseOrder, SaleOrder } from "./order";
 import type { Message } from ".";
+import type { Amount, Wallet } from "./wallet";
 
 export interface BaseUser {
     username: string;
     email: string;
     password: string;
+    wallets?: Array<Wallet>;
 };
 
 export interface Customer extends BaseUser {
@@ -30,7 +32,7 @@ export interface Agent extends Customer {
     isPersonalIdVerified: boolean;
     orders: Array<BaseOrder|SaleOrder|PurchaseOrder>;
     tier: AgentTier;
-    reviews: Array<Review>;
+    reviews?: Array<Review>;
     createdAt: Date;
     lastUpdated: Date;
 }
@@ -53,4 +55,14 @@ export interface AgentLite {
     id: string;
     username: string;
     profilePhoto: string;
+}
+
+export interface Transaction {
+    id: string;
+    type: TransactionType;
+    amount: Amount;
+}
+
+interface TransactionType {
+    name: string;
 }

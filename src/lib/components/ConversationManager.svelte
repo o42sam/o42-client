@@ -2,6 +2,7 @@
     import type { Message } from "$lib/types/app";
     import { groupMessagesByConversation } from "$lib/utils/helpers";
 	import { scale, slide } from "svelte/transition";
+    import { Icon, PaperAirplane, XMark } from "svelte-hero-icons";
 
     export let messages: Array<Message> | null;
     export let classes: string = "";
@@ -28,17 +29,17 @@
         <div
         in:slide
         out:slide
-        class="flex flex-col h-full p-2 bg-gray-100 text-xs {classes}">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-lg font-semibold">{selectedRecipient}</h2>
+        class="flex flex-col h-full rounded-lg bg-gray-100 text-xs {classes}">
+            <div class="flex justify-between items-center mb-2 p-4 bg-white">
+                <h2 class="text-lg font-semibold m-0">{selectedRecipient}</h2>
                 <button
                     on:click={closeConversation}
-                    class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-xs"
+                    class="p-1 bg-red-500 text-white rounded-full hover:bg-red-600 text-xs"
                 >
-                    Close
+                    <Icon src="{XMark}" micro size="20" />
                 </button>
             </div>
-            <div class="flex-1 overflow-y-scroll space-y-2 scroll-m-0 p-2">
+            <div class="flex-1 space-y-2 overflow-auto p-2 hover:">
                 {#each sortedMessages[selectedRecipient] as message}
                     <div
                         class="p-2 rounded-lg max-w-[70%] {message.recipientId === selectedRecipient ? 'bg-orange-500 text-black' : 'ml-auto bg-gray-300 text-black'}"
@@ -54,9 +55,9 @@
                     class="flex-1 p-2 border rounded text-xs"
                 />
                 <button
-                    class="ml-2 px-4 py-2 bg-black text-white rounded hover:bg-orange-600"
+                    class="ml-2 px-2 py-1 bg-black text-white rounded hover:bg-orange-600"
                 >
-                    Send
+                    <Icon src="{PaperAirplane}" solid size="20" class="text-white" />
                 </button>
             </div>
         </div>
@@ -65,7 +66,6 @@
         <div
         in:slide
         class="p-2 overflow-y-scroll text-xs scroll-m-0 scroll {classes}">
-            <p class="text-lg font-bold mb-4">Messages</p>
             {#each Object.entries(sortedMessages) as [recipientId, messages], index (index)}
                 {@const unreadCount = messages.filter(m => m.senderId === recipientId && !m.read).length}
                 <div
@@ -82,7 +82,7 @@
                             </span>
                         {/if}
                     </div>
-                    <p class="text-sm text-gray-600 truncate">
+                    <p class="text-xs text-gray-600 truncate">
                         {messages[messages.length - 1].content}
                     </p>
                 </div>

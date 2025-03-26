@@ -8,8 +8,13 @@
     export let selectedState = '';
   
     onMount(async () => {
-      const response = await fetch('http://states-and-cities.com/api/v1/states');
-      states = await response.json();
+      try {
+        const response = await fetch('http://states-and-cities.com/api/v1/states');
+        states = await response.json();
+      }
+      catch(e) {
+        console.log(e);
+      }
     });
   </script>
   

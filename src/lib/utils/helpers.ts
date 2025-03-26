@@ -1,5 +1,5 @@
 import type { Message } from "$lib/types/app";
-import type { FormField } from "$lib/types/dom/form";
+import type { UserBasicInfoSubmission, FormField } from "$lib/types/dom/form";
 
 export function getRandomInt(min: number, max: number) {
     min = Math.ceil(min);
@@ -25,7 +25,6 @@ export function computeAge(startDate: Date, endDate: Date = new Date()): string 
 
 export function groupMessagesByConversation(messages: Message[], currentUserId: string): { [conversationPartnerId: string]: Message[] } {
     const grouped = messages.reduce((acc, message) => {
-        // Determine the conversation partner
         const partnerId = message.senderId === currentUserId ? message.recipientId : message.senderId;
         
         if (!acc[partnerId]) {
@@ -35,7 +34,6 @@ export function groupMessagesByConversation(messages: Message[], currentUserId: 
         return acc;
     }, {} as { [conversationPartnerId: string]: Message[] });
 
-    // Optionally sort messages by timestamp within each group
     for (const partnerId in grouped) {
         grouped[partnerId].sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
     }
@@ -43,9 +41,44 @@ export function groupMessagesByConversation(messages: Message[], currentUserId: 
     return grouped;
 }
 
-export function createFormDataObject(fields: FormField[]): Record<string, string> {
+export function createFormDataObject(fields: FormField[]): Record<string, string>|UserBasicInfoSubmission {
     return fields.reduce((acc, field) => {
         acc[field.name] = field.value;
         return acc;
     }, {} as Record<string, string>);
 }
+
+export function updateFormObject(form: any, propertyName: string, propertyValue: any, updateFn: (data: any) => any) {
+    // Input validation
+    if (typeof form !== 'object' || form === null) {
+      throw new Error('form must be an object');
+    }
+    if (typeof propertyName !== 'string') {
+      throw new Error('propertyName must be a string');
+    }
+    if (typeof updateFn !== 'function') {
+      throw new Error('updateFn must be a function');
+    }
+  
+    function updateAtLevel(obj: any) {
+      const newObj = { ...obj };
+      for (const key in obj) {
+        if (Array.isArray(obj[key])) {
+          newObj[key] = obj[key].map(item => {
+            if (typeof item === 'object' && item !== null) {
+              // Check if this object has the target property and value
+              if (propertyName in item && item[propertyName] === propertyValue) {
+                return updateFn(item);
+              }
+              // Recurse into nested objects
+              return updateAtLevel(item);
+            }
+            return item;
+          });
+        }
+      }
+      return newObj;
+    }
+  
+    return updateAtLevel(form);
+  }

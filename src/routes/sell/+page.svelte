@@ -1,6 +1,15 @@
 <script lang="ts">
     import StylizedName from "$lib/components/StylizedName.svelte";
-	import { setOrderMode } from "$lib/utils/page";
+	import { orders } from "$lib/consts/app";
+	import { modals } from "$lib/consts/dom";
+	import { setModal } from "../../services/dom";
+	import { setOrderMode } from "../../services/order";
+	import { createSaleOrderModal } from "../../stores/dom";
+
+    const sell = () => {
+        setOrderMode(orders.SALE, true);
+        setModal(true, modals.DYNAMIC, $createSaleOrderModal);
+    };
 </script>
 
 <main class="w-full bg-white mt-32">
@@ -12,7 +21,7 @@
                 <h1 class="text-4xl font-bold mb-4">Sell Your Items Seamlessly with <StylizedName /></h1>
                 <p class="text-xl mb-8">Create a sale order and let our network of verified agents connect you with buyers for a hassle-free experience.</p>
                 <a
-                on:click={() => setOrderMode("sale", true)}
+                on:click={sell}
                 class="button bg-orange-600 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-black">
                     Sell now
                 </a>

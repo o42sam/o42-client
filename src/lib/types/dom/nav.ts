@@ -14,4 +14,20 @@ export type MainNavOption = {
     onClick?: () => void;
 }
 
+export interface SetupNav {
+    name: string;
+    options: Array<SetupNavOption>;
+    lastList: Array<SetupNavOption>;
+    currentList: Array<SetupNavOption>;
+    classes?: string;
+}
+
+interface SetupNavOption {
+    name: string;
+    options: Array<SetupNavOption>;
+    description: string;
+    classes?: string;
+    onChoose?: () => void;
+}
+
 interface MainNavOptionChild extends MainNavOption {}

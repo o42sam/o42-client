@@ -9,9 +9,9 @@
 
 {:else if type === "alt"}
 
-<div class="flex flex-col m-6 bg-white rounded-xl p-6 shadow-lg items-center justify-center {classes}">
-    <span class="poppins-bold text-black">o<span class="text-orange-600">42</span></span>
-    <span class="poppins-light space-x-4 uppercase text-orange-600 text-xs w-full flex justify-between items-center"><span>Buy</span><span>Sell</span><span>Earn</span></span>
+<div class="flex flex-col m-6 bg-white rounded-xl shadow-lg items-center justify-center {classes}">
+    <span class="poppins-bold text-black {classes}">o<span class="text-orange-600">42</span></span>
+    <span class="poppins-light uppercase text-orange-600 gap-6 text-xs flex justify-between items-center"><span>Buy</span><span>Sell</span><span>Earn</span></span>
 </div>
 
 {/if}

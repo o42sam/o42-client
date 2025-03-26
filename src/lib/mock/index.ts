@@ -561,7 +561,7 @@ export const purchaseOrder1: PurchaseOrder = {
     agentsAssignedIds: ["agent_001"],
     createdAt: new Date("2025-03-12"),
     lastUpdated: new Date("2025-03-15"),
-    reference: {
+    productReference: {
         url: "https://supplier.com/usb-cable",
         description: "USB-C charging cable, 3ft"
     },
@@ -577,7 +577,7 @@ export const purchaseOrder2: PurchaseOrder = {
     agentsAssignedIds: ["agent_002"],
     createdAt: new Date("2025-03-16"),
     lastUpdated: new Date("2025-03-17"),
-    reference: {
+    productReference: {
         url: "https://supplier.com/phone-case",
         description: "iPhone 14 Pro case, clear"
     },
