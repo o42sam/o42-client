@@ -7,3 +7,8 @@ declare namespace App {
 	// interface Error {}
 	// interface Platform {}
 }
+interface Window {
+  gtag?: (command: string, action: string, params?) => void
+  // Add other analytics providers as needed
+  // mixpanel?: any
+}

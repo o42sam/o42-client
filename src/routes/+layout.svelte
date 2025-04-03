@@ -21,6 +21,8 @@
 	import BaseModal from '$lib/components/BaseModal.svelte';
 	import ProgressBar from '$lib/components/ProgressBar.svelte';
 	import { Icon, MagnifyingGlass, XCircle, XMark } from 'svelte-hero-icons';
+	import { onMount } from 'svelte';
+	import { trackPageView } from '../services/analytics';
 
 	let showSigninForm: boolean = false;
 	let path: string = $page.url.pathname;
@@ -320,7 +322,7 @@ class="flex flex-col w-full fixed top-0 z-50">
 	<LastUpdated />
 	<div class="bg-gray-800 text-white py-4 w-full">
 		<div class="container mx-auto px-4 text-center">
-		  <p>&copy; 2023 o42. All rights reserved.</p>
+		  <p>© 2023 o42. All rights reserved.</p>
 		</div>
 	</div>
 </footer>

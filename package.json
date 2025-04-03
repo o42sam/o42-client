@@ -40,9 +40,14 @@
   },
   "type": "module",
   "dependencies": {
+    "@amplitude/analytics-browser": "^2.12.2",
     "axios": "^1.8.3",
+    "chart.js": "^4.4.8",
     "firebase": "^11.4.0",
+    "geoip-lite": "^1.4.10",
+    "svelte-chartjs": "^3.1.5",
     "svelte-hero-icons": "^5.2.0",
-    "svelte-inview": "^4.0.4"
+    "svelte-inview": "^4.0.4",
+    "ua-parser-js": "^2.0.3"
   }
 }

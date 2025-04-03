@@ -8,6 +8,7 @@ import {
 export const startEmailVerification: (email: string) => Object = async (email: string) => {
     if (email === "")
         return
+    
     const responseData = await sendEmailVerificationToken(email);
     return responseData;
 }
@@ -17,6 +18,7 @@ export const endEmailVerification: (email: string, token: string) => Object = as
         return
 
     const responseData = await validateEmailVerificationToken(email, token);
+    
     return responseData;
 }
 
@@ -33,5 +35,6 @@ export const endPhonenumberVerification: (phonenumber: string, token: string) =>
         return
 
     const responseData = await validatePhonenumberVerificationToken(phonenumber, token);
+    
     return responseData;
 }

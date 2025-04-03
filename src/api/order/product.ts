@@ -1,6 +1,6 @@
 import type { BaseProduct } from "$lib/types/app/product";
 import axios from "axios";
-import { URL } from '../api';
+import { URL } from '../../api';
 
 export let getById: (id: string) => Promise<BaseProduct> = async (id: string) => {
     const response = await axios.get(`${URL}/products/${id}`)

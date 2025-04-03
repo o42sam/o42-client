@@ -1,6 +1,6 @@
 import axios from 'axios';
 import type { Agent } from "$lib/types/app/user";
-import { URL } from '.';
+import { URL } from '..';
 
 
 export const getById = async (id: string): Promise<Agent> => {
