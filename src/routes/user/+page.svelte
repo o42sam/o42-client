@@ -1,6 +1,11 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
 	import { onMount } from "svelte";
+    import { user } from "../../stores/user";
 
-    onMount(() => goto('/user/user'));
+    onMount(() => {
+        if (!$user) {
+            goto("/user/customer/signup")
+        }
+    });
 </script>

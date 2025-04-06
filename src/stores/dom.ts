@@ -261,6 +261,84 @@ export const EmailChangeModal = writable({
     ]
 })
 
+export const createCustomerAccountModal = writable({
+    name: "Create Customer Account",
+    steps: [
+        {
+            title: "Basic Info",
+            description: "Tell us a bit about you",
+            contentType: modalViews.FORM,
+            contentConfig: {
+                name: "",
+                id: "",
+                description: "",
+                type: forms.CREATE,
+                classes: "grid grid-cols-2 gap-4",
+                fields: [
+                    {
+                        name: "fName",
+                        label: "first name",
+                        type: formFields.TEXT,
+                        description: "",
+                        value: "", classes: "",
+                    },
+                    {
+                        name: "lName",
+                        label: "last name",
+                        type: formFields.TEXT,
+                        description: "",
+                        value: "", classes: "",
+                    },
+                    {
+                        name: "dob",
+                        label: "date of birth",
+                        type: formFields.DATE,
+                        description: "",
+                        value: "", classes: "",
+                    },
+                    {
+                        name: "email",
+                        label: "email",
+                        type: formFields.EMAIL,
+                        description: "",
+                        value: "", classes: "",
+                    },
+                    {
+                        name: "phone",
+                        label: "phone number",
+                        type: formFields.PHONE,
+                        description: "Enter phone number",
+                        value: "", classes: "",
+                    },
+                    {
+                        name: "password",
+                        label: "password",
+                        type: formFields.PASSWORD,
+                        description: "Must be at least 8 characters long, containing at least one uppercase and one lowercase letter, and one special character.",
+                        value: "", classes: "",
+                    },
+                    {
+                        name: "passwordConfirm",
+                        label: "confirm password",
+                        type: formFields.PASSWORD,
+                        isConfirmation: true,
+                        confirmationFor: "password", 
+                        description: "",
+                        value: "", classes: "",
+                    },
+                    {
+                        name: "location",
+                        label: "location",
+                        type: formFields.LOCATION,
+                        description: "",
+                        value: "", classes: "",
+                    },
+                ]
+            }
+        }
+    ],
+});
+
 export const createAgentAccountModal = writable({
     name: "Create Agent Account",
     steps: [

@@ -7,7 +7,7 @@
   import ProductCard from '$lib/components/BaseCard.svelte';
   import type { BaseProductLite, ProductGroup } from '$lib/types/app/product';
   import { orderMode } from '../stores/order';
-  import { isUserNew } from '../stores/user';
+  import { isVisitorNew } from '../stores/user';
   import { setOrderMode } from '../services/order/index';
   import { products } from '$lib/mock';
   import { writable } from 'svelte/store';
@@ -48,7 +48,7 @@
   }
 
   let getStarted = () => {
-      isUserNew.set(false)
+      isVisitorNew.set(false)
   }
 
 	let exploreOptions: Array<string> = ["condition", "time on sale", "category"]
@@ -73,7 +73,7 @@
 	]
 </script>
 
-{#if $isUserNew}
+{#if $isVisitorNew}
 <div
   in:slide
   out:slide
@@ -173,7 +173,7 @@
 		<div class="flex flex-col items-center justify-center space-y-4">
 			<button
       class="button rounded-md text-black bg-white font-bold"
-      on:click={() => {}}>Sign Up Now</button>
+      on:click={() => goto("/user/customer/signup")}>Sign Up Now</button>
 			<button class="button text-white bg-none font-bold bg-black hover:bg-orange-600" on:click={getStarted}>Get Started</button>
 		</div>
     </div>

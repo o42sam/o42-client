@@ -7,9 +7,9 @@
 	import UtilityNav from '$lib/components/UtilityNav.svelte';
 	import BaseForm from '$lib/components/BaseForm.svelte';
 	import { scale, slide } from 'svelte/transition';
-	import { isUserNew } from '../stores/user';
+	import { isVisitorNew } from '../stores/user';
 	import { orderMode } from '../stores/order';
-	import { isSearchEnabled } from '../stores/dom';
+	import { createCustomerAccountModal, isSearchEnabled } from '../stores/dom';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import ScrollToTop from '$lib/components/ScrollToTop.svelte';
@@ -22,13 +22,13 @@
 	import ProgressBar from '$lib/components/ProgressBar.svelte';
 	import { Icon, MagnifyingGlass, XCircle, XMark } from 'svelte-hero-icons';
 	import { onMount } from 'svelte';
-	import { trackPageView } from '../services/analytics';
+	import { fakeStore } from '../api/third-party';
 
 	let showSigninForm: boolean = false;
 	let path: string = $page.url.pathname;
 	
 	if (path.length > 1) {
-		isUserNew.set(false);
+		isVisitorNew.set(false);
 	}
 
 	$: {
@@ -47,13 +47,17 @@
 			setModal(true, modals.SEARCH, null)
 		}
 	}
+	const getCats = async () => {
+		const fakeStoreCategories = await fakeStore();
+		console.log(fakeStoreCategories);
+	}
+
+	getCats();
 </script>
 
 <ScrollToTop />
 {#if $modal.enabled}
 <div
-in:slide
-out:slide
 on:click={() => {}}
 class="h-full w-full fixed top-0 bottom-0 bg-black bg-opacity-80 z-20 flex items-center justify-center">
 	{#if $modal.contentType === modals.DYNAMIC}
@@ -69,14 +73,14 @@ class="h-full w-full fixed top-0 bottom-0 bg-black bg-opacity-80 z-20 flex items
 </div>
 {/if}
 
-{#if $display.isDesktop && !$isUserNew}
+{#if $display.isDesktop && (!$isVisitorNew || $page.url.pathname !== "/")}
 <ProgressBar />
 <header
 in:slide
 out:slide
 class="flex flex-col w-full fixed top-0 z-50">
 	<div
-	class="flex w-full items-center justify-evenly bg-orange-600 text-white {$modal.enabled ? "" : "shadow-xl"}"
+	class="flex w-full items-center justify-evenly bg-orange-600 text-white {$modal.enabled ? "" : "shadow-md"}"
 	style="height: 40px;">
 		<div class="w-1/3 flex items-center justify-center h-full">
 			<button
@@ -102,9 +106,9 @@ class="flex flex-col w-full fixed top-0 z-50">
 					href: "/sell",
 				},
 				{
-					name: "agents",
+					name: "earn",
 					label: "earn",
-					href: "/agents",
+					href: "/earn",
 				},
 				{
 					name: "categories",
@@ -274,7 +278,7 @@ class="flex flex-col w-full fixed top-0 z-50">
 							label: "I don't have an account yet",
 							classes: "text-sm text-white hover:text-black font-light",
 							type: "button",
-							onClick: () => setModal(true, modals.DYNAMIC, $createAgentAccountModal),
+							onClick: () => goto("/user/customer/signup"),
 						}
 					],
 					onSubmit: () => {}
