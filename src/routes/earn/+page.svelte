@@ -42,6 +42,10 @@
       }
     }
 </script>
+
+<svelte:head>
+    <title>Earn on o42</title>
+</svelte:head>
   
   <main class="w-full flex flex-col items-center justify-center mt-20">
     <div class="w-full">

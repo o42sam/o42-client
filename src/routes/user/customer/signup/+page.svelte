@@ -26,6 +26,7 @@
 <svelte:head>
     <title>{$createCustomerAccountModal.name}</title>
 </svelte:head>
+
 <main
 class="h-full">
 </main>

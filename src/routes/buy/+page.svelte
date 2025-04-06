@@ -4,6 +4,9 @@
     import { setModal } from "../../services/dom";
     import { modals } from "$lib/consts/dom";
 </script>
+<svelte:head>
+    <title>Buy on o42</title>
+</svelte:head>
   
   <main class="bg-white mt-32">
     <div class="w-full flex flex-col items-center justify-center space-y-10">

@@ -73,6 +73,10 @@
 	]
 </script>
 
+<svelte:head>
+    <title>o42 Home</title>
+</svelte:head>
+
 {#if $isVisitorNew}
 <div
   in:slide

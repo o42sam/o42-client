@@ -10,7 +10,7 @@
 	import { isVisitorNew } from '../stores/user';
 	import { orderMode } from '../stores/order';
 	import { createCustomerAccountModal, isSearchEnabled } from '../stores/dom';
-	import { goto } from '$app/navigation';
+	import { afterNavigate, goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import ScrollToTop from '$lib/components/ScrollToTop.svelte';
 	import { setOrderMode } from '../services/order/index';
@@ -47,12 +47,20 @@
 			setModal(true, modals.SEARCH, null)
 		}
 	}
+
+	afterNavigate(() => {
+		setModal(false, "");
+		showSigninForm = false;
+	});
+
 	const getCats = async () => {
 		const fakeStoreCategories = await fakeStore();
-		console.log(fakeStoreCategories);
+		console.log("There are ", fakeStoreCategories.length);
 	}
 
-	getCats();
+	onMount(() => {
+		getCats();
+	});
 </script>
 
 <ScrollToTop />

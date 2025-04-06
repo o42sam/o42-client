@@ -44,7 +44,7 @@
       <SkeletonProgressBar
         value={progress}
         max={100}
-        meter="bg-orange-600"
+        meter="bg-green-600"
         track="bg-gray-200"
         height="h-1"
       />
