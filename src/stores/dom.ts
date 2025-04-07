@@ -262,7 +262,7 @@ export const EmailChangeModal = writable({
 })
 
 export const createCustomerAccountModal = writable({
-    name: "Create Customer Account",
+    name: "Create account",
     steps: [
         {
             title: "Basic Info",

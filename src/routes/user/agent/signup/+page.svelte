@@ -1,21 +1,17 @@
 <script lang="ts">
-	import { goto } from "$app/navigation";
+	import { beforeNavigate, goto } from "$app/navigation";
 	import { modals } from "$lib/consts/dom";
-	import { afterUpdate, onMount } from "svelte";
+	import { afterUpdate, beforeUpdate, onMount } from "svelte";
     import { setModal } from "../../../../services/dom";
     import { createAgentAccountModal } from "../../../../stores/dom";
     import { modal } from "../../../../stores/dom";
-	import { isVisitorNew } from "../../../../stores/user";
+
+    let pageOpened: boolean = false;
 
     onMount(() => {
         setModal(true, modals.DYNAMIC, $createAgentAccountModal);
-
-        if (!$modal.enabled) {
-            goto("/")
-        }
-
-        isVisitorNew.set(false);
-    })
+        pageOpened = true;
+    });
 
     afterUpdate(() => {
         if (!$modal.enabled) {

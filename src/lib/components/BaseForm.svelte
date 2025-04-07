@@ -26,10 +26,6 @@ let selectedCode = "+234";
 
 let dispatch = createEventDispatcher();
 
-onMount(async () => {
-    countries = await getCountries();
-});
-
 let passwordVisibilities: (boolean | null)[] = form.fields.map(field => field.type === formFields.PASSWORD ? false : null);
 
 
@@ -103,9 +99,49 @@ const submitForm = async () => {
     }
 
     dispatch('formSubmitted', formData);
-};
+    };
+
+    let googleAuthInitialized = false;
+    let gapi: any;
+
+    onMount(async () => {
+        countries = await getCountries();
+        // Load Google Platform Library
+        const script = document.createElement('script');
+        script.src = 'https://apis.google.com/js/platform.js';
+        script.async = true;
+        script.onload = () => {
+            gapi.load('auth2', () => {
+                gapi.auth2.init({
+                    client_id: '778259602432-6qq61ki5vc14jplf4j37d0u77hv95te9.apps.googleusercontent.com', // Replace with your actual Client ID
+                    scope: 'profile email',          // Scopes for basic profile and email
+                }).then(() => {
+                    googleAuthInitialized = true;
+                }).catch((error: any) => {
+                    console.error('Error initializing Google Auth:', error);
+                });
+            });
+        };
+        document.head.appendChild(script);
+    });
+
+    function signInWithGoogle() {
+        if (!googleAuthInitialized) return;
+        const auth2 = gapi.auth2.getAuthInstance();
+        auth2.signIn().then((googleUser: any) => {
+            const profile = googleUser.getBasicProfile();
+            updateFormWithGoogleProfile(profile);
+        }).catch((error: any) => {
+            console.error('Error signing in with Google:', error);
+        });
+    }
+
+    function updateFormWithGoogleProfile(profile: any) {
+        console.log(profile);
+    }
 
 </script>
+
 <form
     id={form.id ? form.id : ""}
     class="{classes}"
@@ -290,4 +326,17 @@ const submitForm = async () => {
             </button>
         {/each}
     {/if}
+    <div class="mb-4">
+        <p class="text-xs text-gray-600 mb-2">
+            Sign in with Google to automatically fill in your name and email.
+        </p>
+        <button
+            type="button"
+            on:click={signInWithGoogle}
+            disabled={!googleAuthInitialized}
+            class="btn btn-primary rounded-md text-xs px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-400"
+        >
+            Sign in with Google
+        </button>
+    </div>
 </form>

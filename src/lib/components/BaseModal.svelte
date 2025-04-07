@@ -29,10 +29,11 @@
 </script>
 
 {#if steps.length > 0 && config}
-<div in:scale out:scale class="rounded-xl mx-auto p-4 w-1/2 bg-white flex flex-col justify-between mt-10 {classes}" style="height: 550px;">
-    <div class="py-2">
+<div in:scale out:scale class="rounded-xl mx-auto p-4 w-2/3 bg-white flex flex-col justify-between mt-10 {classes}" style="height: 650px;">
+  <h1 in:scale class="text-center mt-2 capitalize text-3xl text-green-800">{config.name}</h1>  
+  <div class="py-1">
       <div class="flex flex-col items-center justify-center mb-4">
-        <span class="text-xl mt-2 font-bold text-black">{steps[currentStep].title}</span>
+        <span class="text-xl font-bold text-black">{steps[currentStep].title}</span>
         <span class="text-sm text-black">{steps[currentStep].description}</span>
       </div>
       {#if steps.length > 1}
@@ -95,7 +96,7 @@
           form={steps[currentStep].contentConfig.id ? steps[currentStep].contentConfig.id : "undefined-node"}
           class="button bg-orange-600 text-xs text-white px-4 py-2 rounded hover:bg-black transition"
         >
-          Finish
+          Done
         </button>
         {:else}
         <button
@@ -104,7 +105,7 @@
         class="button bg-orange-500 text-xs text-white px-4 py-2 rounded hover:bg-black transition"
         on:click={next}
       >
-        Finish
+        Done
       </button>
       {/if}
       {/if}

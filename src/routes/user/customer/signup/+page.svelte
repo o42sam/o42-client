@@ -1,26 +1,23 @@
 <script lang="ts">
 	import { modals } from "$lib/consts/dom";
     import { setModal } from "../../../../services/dom";
-    import { onMount, afterUpdate } from "svelte";
-    import { goto } from "$app/navigation";
+    import { onMount, afterUpdate, beforeUpdate, onDestroy } from "svelte";
+    import { afterNavigate, beforeNavigate, goto } from "$app/navigation";
     import { createCustomerAccountModal, modal } from "../../../../stores/dom";
-	import { isVisitorNew } from "../../../../stores/user";
+
+    let pageOpened: boolean = false;
 
     onMount(() => {
         setModal(true, modals.DYNAMIC, $createCustomerAccountModal);
-
-        if (!$modal.enabled) {
-            goto("/")
-        }
-
-        isVisitorNew.set(false);
-    })
+        pageOpened = true;
+    });
 
     afterUpdate(() => {
-        if (!$modal.enabled) {
-            goto("/")
-        }       
-    })
+        if (!$modal.enabled && pageOpened) {
+            goto("/");
+        };
+    });
+    
 </script>
 
 <svelte:head>

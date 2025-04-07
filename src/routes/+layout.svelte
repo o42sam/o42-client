@@ -49,7 +49,6 @@
 	}
 
 	afterNavigate(() => {
-		setModal(false, "");
 		showSigninForm = false;
 	});
 
@@ -311,7 +310,7 @@ class="flex flex-col w-full fixed top-0 z-50">
 	in:slide
 	type="button"
 	class="absolute capitalize py-2 px-4 mt-9 text-xs z-50 hover:bg-orange-600 self-start rounded-b-lg"
-	on:click={() => { setModal(false, "", null); if ($isSearchEnabled) setSearch(false); }}>
+	on:click={() => { setModal(false, ""); if ($isSearchEnabled) setSearch(false); }}>
 	<Icon src={XMark} class="w-6 h-6 text-white" solid />
 	</button>
 	{/if}

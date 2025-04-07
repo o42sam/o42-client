@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { afterUpdate, onDestroy, onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { display } from '../stores/media';
   import StylizedName from "$lib/components/StylizedName.svelte";
@@ -16,8 +16,9 @@
   import ScrollToTop from '$lib/components/ScrollToTop.svelte';
   import { getRandomInt } from '$lib/utils/helpers';
   import { scrollY } from '../stores/media';
-	import { ArrowPath, Clipboard, ClipboardDocument, ClipboardDocumentCheck, HandRaised, HandThumbUp, Icon, RocketLaunch, ShieldCheck, Truck } from 'svelte-hero-icons';
+	import { ArrowPath, ClipboardDocumentCheck, HandThumbUp, Icon, RocketLaunch, ShieldCheck, Truck } from 'svelte-hero-icons';
   
+
   onMount(() => {
     if (typeof window === 'undefined') return;
     const handleScroll = () => {
@@ -177,7 +178,7 @@
 		<div class="flex flex-col items-center justify-center space-y-4">
 			<button
       class="button rounded-md text-black bg-white font-bold"
-      on:click={() => goto("/user/customer/signup")}>Sign Up Now</button>
+      on:click={() => { getStarted(); goto("/user/customer/signup"); }}>Sign Up Now</button>
 			<button class="button text-white bg-none font-bold bg-black hover:bg-orange-600" on:click={getStarted}>Get Started</button>
 		</div>
     </div>
