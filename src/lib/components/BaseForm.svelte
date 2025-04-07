@@ -113,7 +113,7 @@ const submitForm = async () => {
         script.onload = () => {
             gapi.load('auth2', () => {
                 gapi.auth2.init({
-                    client_id: '778259602432-6qq61ki5vc14jplf4j37d0u77hv95te9.apps.googleusercontent.com', // Replace with your actual Client ID
+                    client_id: '', // Replace with your actual Client ID
                     scope: 'profile email',          // Scopes for basic profile and email
                 }).then(() => {
                     googleAuthInitialized = true;
