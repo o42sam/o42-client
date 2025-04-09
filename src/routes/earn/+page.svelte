@@ -47,9 +47,9 @@
     <title>Earn on o42</title>
 </svelte:head>
   
-  <main class="w-full flex flex-col items-center justify-center mt-20">
+<main class="w-full flex flex-col items-center justify-center pt-20 bg-white">
     <div class="w-full">
-            <!-- Hero Section -->
+        <!-- Hero Section -->
         <div class="bg-white py-16">
             <div class="container mx-auto px-4 w-2/3">
                 <h1 class="text-4xl font-bold text-black mb-4">

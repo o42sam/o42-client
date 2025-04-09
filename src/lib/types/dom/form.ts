@@ -33,6 +33,7 @@ type FormButton = {
     name: string;
     label: string;
     type: string;
+    disabled?: boolean;
     classes?: string;
     onClick: () => void;
 };

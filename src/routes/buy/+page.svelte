@@ -8,7 +8,7 @@
     <title>Buy on o42</title>
 </svelte:head>
   
-  <main class="bg-white mt-32">
+  <main class="bg-white pt-20">
     <div class="w-full flex flex-col items-center justify-center space-y-10">
     <!-- Hero Section: Text on Left, Image on Right -->
     <section class="flex flex-col md:flex-row items-center justify-between w-2/3">

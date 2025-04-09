@@ -1,6 +1,7 @@
 import { writable, readable } from "svelte/store";
 import { modalViews, formFields, forms, formProcesses, modals } from "$lib/consts/dom";
 import { setFormProcessing, setModal } from "../services/dom";
+import { goto } from "$app/navigation";
 
 export const isSearchEnabled = writable(false);
 
@@ -261,6 +262,59 @@ export const EmailChangeModal = writable({
     ]
 })
 
+export const loginForm = writable({
+    name: "login",
+    id: "",
+    description: "",
+    type: forms.AUTH,
+    classes: "flex flex-col space-y-4 w-52",
+    fields: [
+        {
+            name: "email",
+            label: "email",
+            type: "email",
+            description: "",
+            value: ""
+        },
+        {
+            name: "password",
+            label: "password",
+            type: "password",
+            description: "",
+            value: ""
+        },
+    ],
+    buttons: [
+        {
+            name: "submit",
+            label: "log in",
+            classes: "variant-filled bg-white text-orange-600 text-sm capitalize hover:bg-black hover:text-white",
+            type: "submit",
+            onClick: () => {},
+        },
+        {
+            name: "fbAuth",
+            label: "Log in with facebook",
+            classes: "btn btn-primary rounded-md text-xs px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-400 border border-blue-600",
+            type: "button",
+        },
+        {
+            name: "googleAuth",
+            label: "Log in with google",
+            classes: "btn btn-primary rounded-md text-xs px-4 py-2 bg-green-800 text-white hover:bg-green-900 disabled:bg-gray-400 border border-green-800",
+            type: "button",
+        },
+        {
+            name: "signup",
+            label: "I don't have an account yet",
+            classes: "text-sm text-white hover:text-black font-light",
+            type: "button",
+            onClick: () => goto("/user/customer/signup"),
+        }
+    ],
+    onSubmit: () => {}
+})
+
 export const createCustomerAccountModal = writable({
     name: "Create account",
     steps: [
@@ -332,6 +386,20 @@ export const createCustomerAccountModal = writable({
                         type: formFields.LOCATION,
                         description: "",
                         value: "", classes: "",
+                    },
+                ],
+                buttons: [
+                    {
+                        name: "fbAuth",
+                        label: "Sign up with facebook",
+                        classes: "btn btn-primary rounded-md text-xs px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-400 border border-blue-600",
+                        type: "button",
+                    },
+                    {
+                        name: "googleAuth",
+                        label: "Sign up with google",
+                        classes: "btn btn-primary rounded-md text-xs px-4 py-2 bg-green-800 text-white hover:bg-green-900 disabled:bg-gray-400 border border-green-800",
+                        type: "button",
                     },
                 ]
             }
@@ -507,7 +575,7 @@ export const createSaleOrderModal = writable({
                         name: "productName",
                         label: "product name",
                         type: formFields.TEXT,
-                        description: "Tell us what you want.",
+                        description: "Tell us what you want to sell.",
                         value: "", classes: "", labelClasses: ""
                     },
                     {

@@ -195,13 +195,13 @@
 				<p class="text-xl font-bold text-white">Tell us what you want and we'll help you find it.</p>
 				<a
 				class="button text-white font-bold bg-orange-600 animate-pulse-up-down hover:bg-black"
-				on:click={() => {setOrderMode("purchase", true)}}>Order now</a>
+				on:click={() => {setOrderMode("purchase", true); goto("/buy")}}>Order now</a>
 				<p class="text-white font-light text-sm w-1/2 text-center">We are committed to getting you the best deal while shielding you from the risks of buying online.</p>
 			</div>
 			<div class="flex flex-col items-center justify-center space-y-6 z-10 p-6">
 				<p class="text-xl font-bold text-white">Do you have something you want sold ASAP?</p>
 				<a
-				on:click={() => {setOrderMode("sale", true)}}
+				on:click={() => {setOrderMode("sale", true); goto("/sell")}}
 				class="button text-white font-bold bg-orange-600 animate-pulse-up-down hover:bg-black">Sell it now</a>
 				<p class="text-white font-light text-sm w-1/2 text-center">Our agents are on standby, ready to find buyers, with the help of our AI-powered order matching algorithm.</p>
 			</div>

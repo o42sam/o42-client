@@ -9,7 +9,7 @@
 	import { scale, slide } from 'svelte/transition';
 	import { isVisitorNew } from '../stores/user';
 	import { orderMode } from '../stores/order';
-	import { createCustomerAccountModal, isSearchEnabled } from '../stores/dom';
+	import { createCustomerAccountModal, isSearchEnabled, loginForm } from '../stores/dom';
 	import { afterNavigate, goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import ScrollToTop from '$lib/components/ScrollToTop.svelte';
@@ -87,7 +87,7 @@ in:slide
 out:slide
 class="flex flex-col w-full fixed top-0 z-50">
 	<div
-	class="flex w-full items-center justify-evenly bg-orange-600 text-white {$modal.enabled ? "" : "shadow-md"}"
+	class="flex w-full items-center justify-evenly bg-orange-600 text-white {$modal.enabled ? "" : ""}"
 	style="height: 40px;">
 		<div class="w-1/3 flex items-center justify-center h-full">
 			<button
@@ -253,43 +253,8 @@ class="flex flex-col w-full fixed top-0 z-50">
 			on:mouseleave={() => showSigninForm = false}
 			class="absolute top-full z-50 bg-orange-600 rounded-b-lg shadow-lg p-6">
 				<BaseForm
-				classes="flex flex-col space-y-4 w-52"
-				config={{
-					name: "Log in",
-					fields: [
-						{
-							name: "email",
-							label: "email",
-							type: "email",
-							description: "",
-							value: ""
-						},
-						{
-							name: "password",
-							label: "password",
-							type: "password",
-							description: "",
-							value: ""
-						},
-					],
-					buttons: [
-						{
-							name: "submit",
-							label: "log in",
-							classes: "variant-filled bg-white text-orange-600 text-sm capitalize hover:bg-black hover:text-white",
-							type: "submit",
-							onClick: () => {},
-						},
-						{
-							name: "signup",
-							label: "I don't have an account yet",
-							classes: "text-sm text-white hover:text-black font-light",
-							type: "button",
-							onClick: () => goto("/user/customer/signup"),
-						}
-					],
-					onSubmit: () => {}
-				}} />
+				classes={$loginForm.classes}
+				config={$loginForm} />
 			</div>
 			{/if}
 		</div>

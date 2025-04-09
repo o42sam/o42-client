@@ -29,7 +29,7 @@
 </script>
 
 {#if steps.length > 0 && config}
-<div in:scale out:scale class="rounded-xl mx-auto p-4 w-2/3 bg-white flex flex-col justify-between mt-10 {classes}" style="height: 650px;">
+<div in:scale out:scale class="mx-auto p-4 w-2/3 rounded-md bg-white flex flex-col justify-between mt-10 {classes}" style="height: 550px;">
   <h1 in:scale class="text-center mt-2 capitalize text-3xl text-green-800">{config.name}</h1>  
   <div class="py-1">
       <div class="flex flex-col items-center justify-center mb-4">

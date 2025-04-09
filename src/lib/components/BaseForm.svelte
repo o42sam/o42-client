@@ -13,108 +13,118 @@
     import PhotoInput from "./PhotoInput.svelte";
     import { startEmailVerification, startPhonenumberVerification } from "../../services/auth";
     import { Icon, Eye, EyeSlash } from "svelte-hero-icons";
-	import VideoInput from "./VideoInput.svelte";
-export let config: BaseForm;
-export let classes: string = "";
+    import VideoInput from "./VideoInput.svelte";
 
-let form = config;
-let formData: UserBasicInfoSubmission | Record<string, string>;
-$: formData = createFormDataObject(form.fields);
+    export let config: BaseForm;
+    export let classes: string = "";
 
-let countries: { code: string; name: string }[] = [];
-let selectedCode = "+234";
+    let form = config;
+    let formData: UserBasicInfoSubmission | Record<string, string>;
+    $: formData = createFormDataObject(form.fields);
 
-let dispatch = createEventDispatcher();
+    let countries: { code: string; name: string }[] = [];
+    let selectedCode = "+234";
 
-let passwordVisibilities: (boolean | null)[] = form.fields.map(field => field.type === formFields.PASSWORD ? false : null);
+    let dispatch = createEventDispatcher();
 
+    let passwordVisibilities: (boolean | null)[] = form.fields.map(field => field.type === formFields.PASSWORD ? false : null);
 
-function togglePasswordVisibility(index: number) {
-    passwordVisibilities[index] = !passwordVisibilities[index];
-}
+    function togglePasswordVisibility(index: number) {
+        passwordVisibilities[index] = !passwordVisibilities[index];
+    }
 
-function validateField(field: any, value: any, passwordMsg: string="", formData: any) {
-    if (field.type === formFields.EMAIL) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const isValid = emailRegex.test(value);
-        return { isValid, errorMessage: isValid ? "" : "Invalid email address" };
-    } else if (field.type === formFields.PHONE) {
-        const isValid = /^\d+$/.test(value);
-        return { isValid, errorMessage: isValid ? "" : "Phone number must be numeric" };
-    } else if (field.type === formFields.PASSWORD) {
-        if (field.isConfirmation) {
-            const passwordValue = formData[field.confirmationFor];
-            const isValid = value === passwordValue;
-            return { isValid, errorMessage: isValid ? "" : "Passwords do not match" };
+    function validateField(field: any, value: any, passwordMsg: string = "", formData: any) {
+        if (field.type === formFields.EMAIL) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const isValid = emailRegex.test(value);
+            return { isValid, errorMessage: isValid ? "" : "Invalid email address" };
+        } else if (field.type === formFields.PHONE) {
+            const isValid = /^\d+$/.test(value);
+            return { isValid, errorMessage: isValid ? "" : "Phone number must be numeric" };
+        } else if (field.type === formFields.PASSWORD) {
+            if (field.isConfirmation) {
+                const passwordValue = formData[field.confirmationFor];
+                const isValid = value === passwordValue;
+                return { isValid, errorMessage: isValid ? "" : "Passwords do not match" };
+            } else {
+                const minLength = 8;
+                const hasUpperCase = /[A-Z]/.test(value);
+                const hasLowerCase = /[a-z]/.test(value);
+                const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(value);
+                const isValid = value.length >= minLength && hasUpperCase && hasLowerCase && hasSpecial;
+                return { isValid, errorMessage: isValid ? "" : passwordMsg };
+            }
         } else {
-            const minLength = 8;
-            const hasUpperCase = /[A-Z]/.test(value);
-            const hasLowerCase = /[a-z]/.test(value);
-            const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(value);
-            const isValid = value.length >= minLength && hasUpperCase && hasLowerCase && hasSpecial;
-            return { isValid, errorMessage: isValid ? "" : passwordMsg };
+            return { isValid: true, errorMessage: "" };
         }
-    } else {
-        return { isValid: true, errorMessage: "" };
-    }
-}
-
-const hasNewEmailEntry = (data: any) => {
-    return data.email && data.email !== "";
-};
-
-const hasNewPhonenumberEntry = (data: any) => {
-    return data.phonenumber !== null && data.phonenumber !== "";
-};
-
-let isBlurred = form.fields.map(() => false);
-
-const onSelectFieldOptionChange = (event: any) => {
-    let selectOptionValue = event.target.value;
-    form = updateFormObject(form, "value", selectOptionValue, obj => ({...obj, isSelected: true}));
-    console.log(form);
-};
-
-$: validationStates = form.fields.map((field) => validateField(field, field.value, field.description, formData));
-
-const submitForm = async () => {
-    const allValid = validationStates.every(state => state.isValid);
-    if (!allValid) {
-        console.log("Form has validation errors");
-        return;
     }
 
-    const formData = createFormDataObject(form.fields);
+    const hasNewEmailEntry = (data: any) => data.email && data.email !== "";
+    const hasNewPhonenumberEntry = (data: any) => data.phonenumber !== null && data.phonenumber !== "";
 
-    if (hasNewEmailEntry(formData)) {
-        setFormProcessing(true, formProcesses.EMAIL_VERIFICATION);
-        const result = await startEmailVerification(formData.email);
-        console.log(`Email verification start result: ${result}`);
-    }
+    let isBlurred = form.fields.map(() => false);
 
-    if (hasNewPhonenumberEntry(formData) && formData.phonenumber) {
-        setFormProcessing(true, formProcesses.PHONE_VERIFICATION);
-        const result = await startPhonenumberVerification(formData.phonenumber);
-        console.log(`Phone verification start result: ${result}`);
-    }
-
-    dispatch('formSubmitted', formData);
+    const onSelectFieldOptionChange = (event: any) => {
+        let selectOptionValue = event.target.value;
+        form = updateFormObject(form, "value", selectOptionValue, obj => ({ ...obj, isSelected: true }));
     };
 
+    $: validationStates = form.fields.map((field) => validateField(field, field.value, field.description, formData));
+
+    const submitForm = async () => {
+        const allValid = validationStates.every(state => state.isValid);
+        if (!allValid) {
+            console.log("Form has validation errors");
+            return;
+        }
+
+        const formData = createFormDataObject(form.fields);
+
+        if (hasNewEmailEntry(formData)) {
+            setFormProcessing(true, formProcesses.EMAIL_VERIFICATION);
+            const result = await startEmailVerification(formData.email);
+            console.log(`Email verification start result: ${result}`);
+        }
+
+        if (hasNewPhonenumberEntry(formData) && formData.phonenumber) {
+            setFormProcessing(true, formProcesses.PHONE_VERIFICATION);
+            const result = await startPhonenumberVerification(formData.phonenumber);
+            console.log(`Phone verification start result: ${result}`);
+        }
+
+        dispatch('formSubmitted', formData);
+    };
+
+    // Google OAuth
     let googleAuthInitialized = false;
     let gapi: any;
 
+    // Facebook OAuth
+    let facebookAuthInitialized = false;
+    let FB: any;
+
+    let isButtonDisabled = (buttonName: string) => {
+        if (buttonName === "fbAuth") {
+            return !facebookAuthInitialized
+        }
+        else if (buttonName === "googleAuth") {
+            return !googleAuthInitialized
+        }
+        return false;
+    }
+
     onMount(async () => {
         countries = await getCountries();
+
         // Load Google Platform Library
-        const script = document.createElement('script');
-        script.src = 'https://apis.google.com/js/platform.js';
-        script.async = true;
-        script.onload = () => {
+        const googleScript = document.createElement('script');
+        googleScript.src = 'https://apis.google.com/js/platform.js';
+        googleScript.async = true;
+        googleScript.onload = () => {
             gapi.load('auth2', () => {
                 gapi.auth2.init({
-                    client_id: '', // Replace with your actual Client ID
-                    scope: 'profile email',          // Scopes for basic profile and email
+                    client_id: '', // Replace with your Google Client ID
+                    scope: 'profile email',
                 }).then(() => {
                     googleAuthInitialized = true;
                 }).catch((error: any) => {
@@ -122,7 +132,23 @@ const submitForm = async () => {
                 });
             });
         };
-        document.head.appendChild(script);
+        document.head.appendChild(googleScript);
+
+        const facebookScript = document.createElement('script');
+        facebookScript.src = 'https://connect.facebook.net/en_US/sdk.js';
+        facebookScript.async = true;
+        facebookScript.onload = () => {
+            window.fbAsyncInit = function() {
+                FB.init({
+                    appId: '', // Replace with Facebook App ID
+                    cookie: true,
+                    xfbml: true,
+                    version: 'v19.0'
+                });
+                facebookAuthInitialized = true;
+            };
+        };
+        document.head.appendChild(facebookScript);
     });
 
     function signInWithGoogle() {
@@ -137,16 +163,53 @@ const submitForm = async () => {
     }
 
     function updateFormWithGoogleProfile(profile: any) {
-        console.log(profile);
+        form.fields = form.fields.map(field => {
+            if (field.type === formFields.EMAIL) return { ...field, value: profile.getEmail() };
+            if (field.type === formFields.TEXT && field.name === 'name') return { ...field, value: profile.getName() };
+            return field;
+        });
+        formData = createFormDataObject(form.fields); // Update formData reactively
     }
 
+    function signInWithFacebook() {
+        if (!facebookAuthInitialized) return;
+        FB.login((response: any) => {
+            if (response.authResponse) {
+                const accessToken = response.authResponse.accessToken;
+                getFacebookProfile(accessToken);
+            } else {
+                console.log('User cancelled login or did not fully authorize.');
+            }
+        }, { scope: 'public_profile,email' });
+    }
+
+    function getFacebookProfile(accessToken: string) {
+        FB.api('/me', { fields: 'id,name,email' }, (response: any) => {
+            if (response && !response.error) {
+                updateFormWithFacebookProfile(response);
+            } else {
+                console.error('Error fetching Facebook profile:', response.error);
+            }
+        });
+    }
+
+    function updateFormWithFacebookProfile(profile: any) {
+        form.fields = form.fields.map(field => {
+            if (field.type === formFields.EMAIL) return { ...field, value: profile.email || '' };
+            if (field.type === formFields.TEXT && field.name === 'name') return { ...field, value: profile.name || '' };
+            return field;
+        });
+        formData = createFormDataObject(form.fields); // Update formData reactively
+    }
 </script>
 
 <form
     id={form.id ? form.id : ""}
-    class="{classes}"
+    class="relative"
     on:submit|preventDefault={submitForm}
 >
+    <div
+    class="{classes}">
     {#if $formProcessing.enabled}
         <div
             class="absolute top-0 left-0 flex items-center justify-center bg-black z-50 w-full h-full bg-opacity-80 text-xs"
@@ -309,34 +372,35 @@ const submitForm = async () => {
                     ></textarea>
                 </label>
             {:else if field.type === formFields.VIDEO}
-            <VideoInput
-            bind:video={field.value}/>
-            <span class="text-xs mt-1 text-gray-400 font-light italic text-center">{field.description}</span>
+                <VideoInput bind:video={field.value} />
+                <span class="text-xs mt-1 text-gray-400 font-light italic text-center">{field.description}</span>
             {/if}
         </label>
     {/each}
+    </div>
     {#if form.buttons}
+    <div
+    class="py-4 w-full {form.classes}">
         {#each form.buttons as button, index (index)}
+            {#if button.name === "googleAuth" || button.name === "fbAuth"}
             <button
                 type={button.type === "submit" ? "submit" : "button"}
-                class="btn rounded-md {button.classes}"
+                disabled={() => isButtonDisabled(button.name)}
+                class="btn rounded-md capitalize {button.classes}"
                 on:click={button.onClick}
             >
                 {button.label}
             </button>
+            {:else}
+            <button
+                type={button.type === "submit" ? "submit" : "button"}
+                class="btn rounded-md capitalize {button.classes}"
+                on:click={button.onClick}
+            >
+                {button.label}
+            </button>            
+            {/if}
         {/each}
-    {/if}
-    <div class="mb-4">
-        <p class="text-xs text-gray-600 mb-2">
-            Sign in with Google to automatically fill in your name and email.
-        </p>
-        <button
-            type="button"
-            on:click={signInWithGoogle}
-            disabled={!googleAuthInitialized}
-            class="btn btn-primary rounded-md text-xs px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-400"
-        >
-            Sign in with Google
-        </button>
     </div>
+    {/if}
 </form>

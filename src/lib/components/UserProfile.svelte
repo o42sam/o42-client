@@ -31,7 +31,7 @@
         <div class="flex justify-between items-start">
             <!-- Left Column: Profile Details -->
             <div class="w-1/4 text-xs" style="height: 500px;">
-                <div class="bg-white  p-4 h-full">
+                <div class="p-4 h-full">
                     <!-- Profile Photo -->
                     <div class="flex justify-center">
                         <img
@@ -101,7 +101,7 @@
         <div class="flex items-start justify-center w-3/4">
             {#if isAgent(user)}
             <!-- Placeholder for Future Content -->
-            <div class="bg-white p-4 w-2/3 space-y-4" style="height: 500px;">
+            <div class="p-4 w-2/3 space-y-4" style="height: 500px;">
                 <div
                 class="">
                     <button
@@ -131,7 +131,7 @@
             <!-- Reviews Section -->
             <div class="w-1/3">
                 <p class="text-lg font-bold">Messages</p>
-                <div class=" p-4 mb-4 bg-white" style="height: 500px">
+                <div class=" p-4 mb-4" style="height: 500px">
                     <ConversationManager classes="h-full" currentUserId={user.id} messages={user.messages ? user.messages : null} />
                 </div>
                 <ReviewManager classes="" target={user} />

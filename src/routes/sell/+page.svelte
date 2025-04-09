@@ -16,7 +16,7 @@
     <title>Sell on o42</title>
 </svelte:head>
 
-<main class="w-full bg-white mt-32">
+<main class="w-full bg-white pt-32">
     <div
     class="w-full flex flex-col items-center justify-center">
         <!-- Hero Section -->

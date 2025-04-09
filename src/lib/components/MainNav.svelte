@@ -19,7 +19,7 @@
     <ul class="flex relative text-white h-full w-full items-center justify-evenly m-0 p-0 {navListClasses}">
         {#each options as option, index (index)}
         <li
-        class="text-black flex flex-col items-center justify-center py-4">
+        class="text-black flex flex-col items-center justify-center py-4 font-bold text-sm">
             {#if !option.children}
             <a class="{isCurrentOptionSelected(option.href) ? "cursor-default" : "anchor hover:animate-wiggle"} h-full w-full" href="{option.href}">
                 {option.label}
