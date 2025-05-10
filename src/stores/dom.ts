@@ -1,6 +1,6 @@
-import { writable, readable } from "svelte/store";
+import { writable } from "svelte/store";
 import { modalViews, formFields, forms, formProcesses, modals } from "$lib/consts/dom";
-import { setFormProcessing, setModal } from "../services/dom";
+import { setModal } from "../services/dom";
 import { goto } from "$app/navigation";
 
 export const isSearchEnabled = writable(false);
@@ -315,12 +315,53 @@ export const loginForm = writable({
     onSubmit: () => {}
 })
 
+export const customerSignUpForm = writable({
+    name: "",
+    id: "",
+    description: "",
+    type: forms.CREATE,
+    classes: "flex flex-col space-y-1",
+    fields: [
+        {
+            name: "email",
+            label: "email",
+            type: formFields.EMAIL,
+            description: "We will verify that this email belongs to you",
+            value: "",
+            classes: "",
+        }
+    ],
+    buttons: [
+        {
+            name: "emailSignUp",
+            label: "Continue with email",
+            classes: "bg-orange-600 hover:bg-black hover:text-white text-sm",
+            type: "submit",
+            onClick: () => {}
+        },
+        {
+            name: "fbAuth",
+            label: "Sign up with facebook",
+            classes: "btn btn-primary rounded-md text-xs px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-400 border border-blue-600",
+            type: "button",
+            onClick: () => {}
+        },
+        {
+            name: "googleAuth",
+            label: "Sign up with google",
+            classes: "btn btn-primary rounded-md text-xs px-4 py-2 bg-green-800 text-white hover:bg-green-900 disabled:bg-gray-400 border border-green-800",
+            type: "button",
+            onClick: () => {}
+        },
+    ],
+});
+
 export const createCustomerAccountModal = writable({
     name: "Create account",
     steps: [
         {
-            title: "Basic Info",
-            description: "Tell us a bit about you",
+            title: "Email",
+            description: "Sign up using your email. We will send a code to your inbox to verify that this email is yours.",
             contentType: modalViews.FORM,
             contentConfig: {
                 name: "",
@@ -330,65 +371,20 @@ export const createCustomerAccountModal = writable({
                 classes: "grid grid-cols-2 gap-4",
                 fields: [
                     {
-                        name: "fName",
-                        label: "first name",
-                        type: formFields.TEXT,
-                        description: "",
-                        value: "", classes: "",
-                    },
-                    {
-                        name: "lName",
-                        label: "last name",
-                        type: formFields.TEXT,
-                        description: "",
-                        value: "", classes: "",
-                    },
-                    {
-                        name: "dob",
-                        label: "date of birth",
-                        type: formFields.DATE,
-                        description: "",
-                        value: "", classes: "",
-                    },
-                    {
                         name: "email",
                         label: "email",
                         type: formFields.EMAIL,
                         description: "",
                         value: "", classes: "",
-                    },
-                    {
-                        name: "phone",
-                        label: "phone number",
-                        type: formFields.PHONE,
-                        description: "Enter phone number",
-                        value: "", classes: "",
-                    },
-                    {
-                        name: "password",
-                        label: "password",
-                        type: formFields.PASSWORD,
-                        description: "Must be at least 8 characters long, containing at least one uppercase and one lowercase letter, and one special character.",
-                        value: "", classes: "",
-                    },
-                    {
-                        name: "passwordConfirm",
-                        label: "confirm password",
-                        type: formFields.PASSWORD,
-                        isConfirmation: true,
-                        confirmationFor: "password", 
-                        description: "",
-                        value: "", classes: "",
-                    },
-                    {
-                        name: "location",
-                        label: "location",
-                        type: formFields.LOCATION,
-                        description: "",
-                        value: "", classes: "",
-                    },
+                    }
                 ],
                 buttons: [
+                    {
+                        name: "emailSubmit",
+                        label: "Continue with email",
+                        classes: "",
+                        type: "submit"
+                    },
                     {
                         name: "fbAuth",
                         label: "Sign up with facebook",
@@ -482,7 +478,7 @@ export const createAgentAccountModal = writable({
                 ]
             },
             buttons: [],
-            onNext: (data: any) => {
+            onNext: (data: unknown) => {
                 console.log(data);
             }
         },
@@ -550,7 +546,7 @@ export const createAgentAccountModal = writable({
                 ]
             },
             buttons: [],
-            onNext: (data: any) => {
+            onNext: (data: unknown) => {
                 console.log(data);
             }
         }
@@ -633,7 +629,7 @@ export const createSaleOrderModal = writable({
                 ]
             },
             buttons: [],
-            onNext: (data: any) => {
+            onNext: (data: unknown) => {
                 console.log(data);
             }
         },
@@ -643,7 +639,7 @@ export const createSaleOrderModal = writable({
             contentType: modalViews.FORM,
             contentConfig: {},
             buttons: [],
-            onNext: (data: any) => {
+            onNext: (data: unknown) => {
                 console.log(data);
             }
         },
@@ -654,7 +650,7 @@ export const createSaleOrderModal = writable({
             contentConfig: {
             },
             buttons: [],
-            onNext: (data: any) => {
+            onNext: (data: unknown) => {
                 console.log(data);
             }
         },

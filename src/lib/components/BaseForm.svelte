@@ -1,17 +1,15 @@
 <script lang="ts">
-    import type { BaseForm, UserBasicInfoSubmission } from "$lib/types/dom/form";
+    import type { BaseForm, UserEmailSubmission } from "$lib/types/dom/form";
     import { formFields, formProcesses, forms } from "$lib/consts/dom";
     import { getCountries } from "../../api/third-party";
     import { onMount } from "svelte";
-    import { formProcessing } from "../../stores/dom";
-    import { setFormProcessing } from "../../services/dom";
     import VerificationCodeInput from "./VerificationCodeInput.svelte";
     import { createEventDispatcher } from "svelte";
-    import { createFormDataObject, updateFormObject } from "$lib/utils/helpers";
+    import { createFormDataObject, isValidEmail, isValidPhoneNumber, updateFormObject } from "$lib/utils/helpers";
     import LocationInput from "./LocationInput.svelte";
     import { fade } from "svelte/transition";
     import PhotoInput from "./PhotoInput.svelte";
-    import { startEmailVerification, startPhonenumberVerification } from "../../services/auth";
+    import { sendToken, validateToken } from "../../services/auth";
     import { Icon, Eye, EyeSlash } from "svelte-hero-icons";
     import VideoInput from "./VideoInput.svelte";
 
@@ -19,8 +17,8 @@
     export let classes: string = "";
 
     let form = config;
-    let formData: UserBasicInfoSubmission | Record<string, string>;
-    $: formData = createFormDataObject(form.fields);
+    let currentFormData: unknown;
+    $: currentFormData = createFormDataObject(form.fields);
 
     let countries: { code: string; name: string }[] = [];
     let selectedCode = "+234";
@@ -35,11 +33,10 @@
 
     function validateField(field: any, value: any, passwordMsg: string = "", formData: any) {
         if (field.type === formFields.EMAIL) {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            const isValid = emailRegex.test(value);
+            const isValid = isValidEmail(value);
             return { isValid, errorMessage: isValid ? "" : "Invalid email address" };
         } else if (field.type === formFields.PHONE) {
-            const isValid = /^\d+$/.test(value);
+            const isValid = isValidPhoneNumber(value);
             return { isValid, errorMessage: isValid ? "" : "Phone number must be numeric" };
         } else if (field.type === formFields.PASSWORD) {
             if (field.isConfirmation) {
@@ -59,9 +56,6 @@
         }
     }
 
-    const hasNewEmailEntry = (data: any) => data.email && data.email !== "";
-    const hasNewPhonenumberEntry = (data: any) => data.phonenumber !== null && data.phonenumber !== "";
-
     let isBlurred = form.fields.map(() => false);
 
     const onSelectFieldOptionChange = (event: any) => {
@@ -69,7 +63,7 @@
         form = updateFormObject(form, "value", selectOptionValue, obj => ({ ...obj, isSelected: true }));
     };
 
-    $: validationStates = form.fields.map((field) => validateField(field, field.value, field.description, formData));
+    $: validationStates = form.fields.map((field) => validateField(field, field.value, field.description, currentFormData));
 
     const submitForm = async () => {
         const allValid = validationStates.every(state => state.isValid);
@@ -79,17 +73,9 @@
         }
 
         const formData = createFormDataObject(form.fields);
-
-        if (hasNewEmailEntry(formData)) {
-            setFormProcessing(true, formProcesses.EMAIL_VERIFICATION);
-            const result = await startEmailVerification(formData.email);
-            console.log(`Email verification start result: ${result}`);
-        }
-
-        if (hasNewPhonenumberEntry(formData) && formData.phonenumber) {
-            setFormProcessing(true, formProcesses.PHONE_VERIFICATION);
-            const result = await startPhonenumberVerification(formData.phonenumber);
-            console.log(`Phone verification start result: ${result}`);
+        
+        if (typeof form.onSubmit !== "undefined") {
+            form.onSubmit();
         }
 
         dispatch('formSubmitted', formData);
@@ -168,7 +154,7 @@
             if (field.type === formFields.TEXT && field.name === 'name') return { ...field, value: profile.getName() };
             return field;
         });
-        formData = createFormDataObject(form.fields); // Update formData reactively
+        currentFormData = createFormDataObject(form.fields); // Update formData reactively
     }
 
     function signInWithFacebook() {
@@ -199,7 +185,12 @@
             if (field.type === formFields.TEXT && field.name === 'name') return { ...field, value: profile.name || '' };
             return field;
         });
-        formData = createFormDataObject(form.fields); // Update formData reactively
+        currentFormData = createFormDataObject(form.fields);
+    }
+
+    function submitCode(e: CustomEvent) {
+        const code = e.detail;
+        dispatch("form submitted", code);
     }
 </script>
 
@@ -210,43 +201,6 @@
 >
     <div
     class="{classes}">
-    {#if $formProcessing.enabled}
-        <div
-            class="absolute top-0 left-0 flex items-center justify-center bg-black z-50 w-full h-full bg-opacity-80 text-xs"
-        >
-            {#if $formProcessing.process === formProcesses.EMAIL_VERIFICATION}
-                <div class="bg-white p-6 flex flex-col space-y-4 rounded-lg shadow-xl">
-                    <p>Enter the code we sent to your email {formData.email} to verify that it is yours</p>
-                    <VerificationCodeInput on:complete={() => {}} />
-                    <div class="flex flex-col items-center justify-center gap-2">
-                        <p class="">Didn't get verification code?</p>
-                        <button
-                            type="button"
-                            class="anchor capitalize hover:underline"
-                            on:click={() => startEmailVerification(formData.email)}
-                        >
-                            resend code
-                        </button>
-                    </div>
-                </div>
-            {:else if $formProcessing.process === formProcesses.PHONE_VERIFICATION}
-                <div class="bg-white p-6 flex flex-col space-y-4 rounded-lg shadow-xl">
-                    <p>Enter the code we sent to your phone number {formData.phonenumber} to verify that it is yours</p>
-                    <VerificationCodeInput on:complete={() => {}} />
-                    <div class="flex flex-col items-center justify-center gap-2">
-                        <p class="">Didn't get verification code?</p>
-                        <button
-                            type="button"
-                            class="anchor capitalize hover:underline"
-                            on:click={() => startPhonenumberVerification(formData.phonenumber ? formData.phonenumber : "")}
-                        >
-                            resend code
-                        </button>
-                    </div>
-                </div>
-            {/if}
-        </div>
-    {/if}
     {#each form.fields as field, index (index)}
         <label class="label text-xs {field.labelClasses}">
             <span class="capitalize">{field.label}</span>
@@ -374,6 +328,21 @@
             {:else if field.type === formFields.VIDEO}
                 <VideoInput bind:video={field.value} />
                 <span class="text-xs mt-1 text-gray-400 font-light italic text-center">{field.description}</span>
+            {:else if field.type === formFields.CODE}
+            <div class="bg-white p-6 flex flex-col space-y-4 rounded-lg shadow-xl">
+                <p>{field.description}</p>
+                <VerificationCodeInput on:complete={(e) => submitCode(e)} />
+                <div class="flex flex-col items-center justify-center gap-2">
+                    <p class="">Didn't get verification code?</p>
+                    <button
+                        type="button"
+                        class="anchor capitalize hover:underline"
+                        on:click={() => {}}
+                    >
+                        resend code
+                    </button>
+                </div>
+            </div>
             {/if}
         </label>
     {/each}

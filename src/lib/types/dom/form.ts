@@ -5,7 +5,7 @@ export type BaseForm = {
     classes?: string;
     fields: Array<FormField>;
     buttons: Array<FormButton>;
-    onSubmit: () => void;
+    onSubmit?: () => void;
 };
 
 export type FormField = {
@@ -14,7 +14,7 @@ export type FormField = {
     type: string;
     description?: string;
     options?: Array<SelectFieldOption>
-    value: any;
+    value: unknown;
     isConfirmation?: boolean;
     inputClasses?: string;
     labelClasses?: string;
@@ -38,28 +38,36 @@ type FormButton = {
     onClick: () => void;
 };
 
-export interface UserBasicInfoSubmission {
-    fName: string;
-    lName: string;
+export type UserEmailSubmission = {
     email: string;
-    password: string;
-    phonenumber?: string;
-    confirmPassword: string;
 };
 
-export interface UserIdentificationInfoSubmission {
+export type VerificationTokenSubmission = {
+    token: string;
+    target: string;
+};
+
+export type UserPhoneNumberSubmission = {
+    phoneNumber: string;
+};
+
+export type UserBasicInfoSubmission ={
+    fName: string;
+    lName: string;
+};
+
+export type UserIdentificationInfoSubmission = {
     profilePhoto: string;
     idNumber: string;
     preferredPersonalId: string;
     idDocumentPhoto: string;
 };
 
-export interface UserFinancialInfoSubmission {
-    userId: string;
+export type UserFinancialInfoSubmission = {
     bvn: string;
 }
 
-export interface SaleOrderBasicInfoSubmission {
+export type SaleOrderBasicInfoSubmission = {
     name: string;
     creatorId?: string;
     description: string;
@@ -68,7 +76,7 @@ export interface SaleOrderBasicInfoSubmission {
     commissionOnFulfill: number;
 }
 
-export interface SaleOrderProductInfoSubmission {
+export type SaleOrderProductInfoSubmission = {
     name: string;
     category: string;
     description: string;
@@ -78,7 +86,7 @@ export interface SaleOrderProductInfoSubmission {
 
 }
 
-export interface PurchaseOrderBasicInfoSubmission {
+export type PurchaseOrderBasicInfoSubmission = {
     name: string;
     description: string;
     productReferenceUrl: string;

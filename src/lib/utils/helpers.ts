@@ -1,5 +1,5 @@
 import type { Message } from "$lib/types/app";
-import type { UserBasicInfoSubmission, FormField } from "$lib/types/dom/form";
+import type { UserEmailSubmission, FormField } from "$lib/types/dom/form";
 
 export function getRandomInt(min: number, max: number) {
     min = Math.ceil(min);
@@ -41,7 +41,7 @@ export function groupMessagesByConversation(messages: Message[], currentUserId: 
     return grouped;
 }
 
-export function createFormDataObject(fields: FormField[]): Record<string, string>|UserBasicInfoSubmission {
+export function createFormDataObject(fields: FormField[]): Record<string, string>|UserEmailSubmission {
     return fields.reduce((acc, field) => {
         acc[field.name] = field.value;
         return acc;
@@ -81,4 +81,13 @@ export function updateFormObject(form: any, propertyName: string, propertyValue:
     }
   
     return updateAtLevel(form);
+  }
+
+  export function isValidEmail(email: string) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email); 
+  }
+
+  export function isValidPhoneNumber(phoneNumber: string) {
+    return /^\d+$/.test(phoneNumber);
   }

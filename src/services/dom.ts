@@ -1,7 +1,7 @@
 import { modals } from "$lib/consts/dom";
 import { modal, formProcessing, isSearchEnabled } from "../stores/dom";
 
-export const setModal = (enabled: boolean, contentType: string, content: any=null) => {
+export const setModal = (enabled: boolean, contentType: string, content: unknown|null) => {
     modal.set({
         enabled,
         contentType,

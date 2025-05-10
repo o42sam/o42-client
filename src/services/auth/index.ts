@@ -1,40 +1,27 @@
+import { isValidEmail, isValidPhoneNumber } from "$lib/utils/helpers";
 import {
     sendEmailVerificationToken,
     sendPhoneNumberVerificationToken,
-    validateEmailVerificationToken,
     validatePhonenumberVerificationToken
 } from "../../api";
 
-export const startEmailVerification: (email: string) => Object = async (email: string) => {
-    if (email === "")
-        return
-    
-    const responseData = await sendEmailVerificationToken(email);
-    return responseData;
+export const sendToken: (email: string) => unknown = async (target: string) => {
+    if (isValidEmail(target)) {
+        return await sendEmailVerificationToken(target);
+    }
+    else if (isValidPhoneNumber(target)) {
+        return await sendPhoneNumberVerificationToken(target);
+    }
+    else {
+        throw new Error("Target is not valid");
+    }
 }
 
-export const endEmailVerification: (email: string, token: string) => Object = async (email: string, token: string) => {
-    if (email === "" && token === "") 
+export const validateToken: (target: string, token: string) => unknown = async (target: string, token: string) => {
+    if (target === "" || token === "")
         return
 
-    const responseData = await validateEmailVerificationToken(email, token);
-    
-    return responseData;
-}
-
-export const startPhonenumberVerification: (phonenumber: string) => Object = async (phonenumber: string) => {
-    if (phonenumber === "")
-        return
-
-    const responseData = await sendPhoneNumberVerificationToken(phonenumber);
-    return responseData;
-}
-
-export const endPhonenumberVerification: (phonenumber: string, token: string) => Object = async (phonenumber: string, token: string) => {
-    if (phonenumber === "" || token === "")
-        return
-
-    const responseData = await validatePhonenumberVerificationToken(phonenumber, token);
+    const responseData = await validatePhonenumberVerificationToken(target, token);
     
     return responseData;
 }

@@ -9,6 +9,7 @@ export const formFields = {
     PHOTO: "photo",
     DESCRIPTION: "description",
     VIDEO: "video",
+    CODE: "code",
 };
 
 export const modalViews = {
